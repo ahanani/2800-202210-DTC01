@@ -3,9 +3,6 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql");
-const { EOF } = require("dns");
-const { fileURLToPath } = require("url");
-const { json } = require("express");
 
 app.use(express.static('javascript'));
 app.use(express.static('css'));
