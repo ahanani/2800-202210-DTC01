@@ -35,7 +35,8 @@ app.get("/users", function (req, res) {
     });
 });
 
-const port = 3000;
-app.listen(port, (err) => {
-    console.log(err);
+
+app.listen(process.env.PORT || 3000, function (err) {
+    if (err)
+        console.log(err);
 })
