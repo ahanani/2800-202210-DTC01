@@ -3,19 +3,20 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql");
+const { EOF } = require("dns");
+const { fileURLToPath } = require("url");
+const { json } = require("express");
 
 app.use(express.static('javascript'));
 app.use(express.static('css'));
 app.use(express.static('resource'));
 
-var users = [{"username" : "comp2800", "password" : "nothing"}]
-
-// let coonnection = mysql.createConnection({
-//     host = '127.0.0.1:3306',
-//     user = 'root',
-//     password = '',
-//     database = 'COMP2800_Project'
-// });
+let connection = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'password',
+    database: 'COMP2800_Project'
+});
 
 app.get("/", function (req, res) {
     res.sendFile(__dirname + '/login.html');
@@ -25,14 +26,17 @@ app.get("/users", function (req, res) {
     let userId = (req.query.id).trim();
     let userPassword = req.query.password;
 
-    users.forEach(user => {
-        if (userId === user.username && userPassword === user.password) {
-            console.log("User found!");
-        } else {
-            console.log("User not found!");
-        }
-    })
-})
+    connection.connect(function (err) {
+        connection.query(`SELECT * FROM users`, function(err, result) {
+            result = Object.values(JSON.parse(JSON.stringify(result)));
+            result.forEach(user => {
+                if (userId === user.name && userPassword === user.password) {
+                    console.log("Found the user!");
+                }
+            })
+        });
+    });
+});
 
 const port = 3000;
 app.listen(port, (err) => {

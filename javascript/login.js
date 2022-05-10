@@ -10,7 +10,6 @@ document.getElementById("submit").addEventListener("click", function() {
     let xhttp =  new XMLHttpRequest();
 
     xhttp.onload = () => {
-
     }
 
     xhttp.open("GET", "/users?id=" + userId + "&password=" + userPassword, true);
