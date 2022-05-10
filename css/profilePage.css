@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=VT323&display=swap');
+
+html, body {
+    padding: 0%;
+    margin: auto;
+    font-family: 'Roboto Condensed', sans-serif;
+    background-color: rgb(87, 128, 87);
+    color: white;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: 40% 60%;
+    height: 100vh;
+}
+
+#profileImage {
+    grid-row: 1;
+    grid-column: 2;
+    margin: auto;
+    background-color: #63b75b;
+}
+
+#userInfo {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0% auto auto auto;
+    display: grid;
+    display: grid;
+    grid-template-rows: 20% 20% 20% 20% 20%;
+    grid-template-columns: 100%;
+
+}
+
+
+
+#firstName, #lastName, #email, #password {
+    border: none;
+    margin: 3% 0% 3% 0%;
+    border-radius: 25px;
+    height: 20px;
+    padding: 0% 3% 0% 3%;
+}
+
+.firstName {
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+
+.lastName {
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+
+.email {
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+
+.password {
+    grid-row: 4;
+    display: grid;
+    grid-template-columns: 40% 60%;
+}
+
+.buttons {
+    grid-row: 5;
+    margin-top: 10%;
+}
+
+#save, #cancel {
+    width: 30%;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    background-color: #63b75b;
+    float: right;
+}
+
+#cancel {
+    margin-right: 5%;
+}
+
+label {
+    margin: auto 10% auto auto;
+}
