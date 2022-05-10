@@ -5,7 +5,7 @@ const path = require("path");
 const mysql = require("mysql");
 
 app.use(express.static('javascript'));
-app.use(express.static('front-end'));
+app.use(express.static('css'));
 app.use(express.static('resource'));
 
 var users = [{"username" : "comp2800", "password" : "nothing"}]
