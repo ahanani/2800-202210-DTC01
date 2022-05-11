@@ -7,6 +7,7 @@ const mysql = require("mysql");
 app.use(express.static('javascript'));
 app.use(express.static('css'));
 app.use(express.static('resource'));
+app.use(express.static('html'));
 
 let connection = mysql.createConnection({
     host: '127.0.0.1',
@@ -16,7 +17,7 @@ let connection = mysql.createConnection({
 });
 
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + '/login.html');
+    res.sendFile(__dirname + '/html/login.html');
 })
 
 app.get("/users", function (req, res) {
@@ -25,8 +26,8 @@ app.get("/users", function (req, res) {
 
     connection.connect(function (err) {
         connection.query(`SELECT * FROM users`, function(err, result) {
-            result = Object.values(JSON.parse(JSON.stringify(result)));
-            result.forEach(user => {
+            let value = Object.values(JSON.parse(JSON.stringify(result)));
+            value.forEach(user => {
                 if (userId === user.name && userPassword === user.password) {
                     console.log("Found the user!");
                 }

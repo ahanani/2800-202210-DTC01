@@ -4,14 +4,16 @@ window.onload = () => {
 
 
 document.getElementById("submit").addEventListener("click", function() {
-    let userId = (document.getElementById("userId").value);
-    let userPassword = document.getElementById("userPassword").value;
+    window.location.href = "/landingPage.html";
+    // let userId = (document.getElementById("userId").value);
+    // let userPassword = document.getElementById("userPassword").value;
 
-    let xhttp =  new XMLHttpRequest();
+    // let xhttp =  new XMLHttpRequest();
 
-    xhttp.onload = () => {
-    }
+    // xhttp.onload = () => {
+        
+    // }
 
-    xhttp.open("GET", "/users?id=" + userId + "&password=" + userPassword, true);
-    xhttp.send();
+    // xhttp.open("GET", "/users?id=" + userId + "&password=" + userPassword, true);
+    // xhttp.send();
 });
