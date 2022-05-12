@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=VT323&display=swap');
 
+@keyframes XMotion {
+    from {
+        transform: translateX(-100px);
+        opacity: 0%;
+    }
+
+    to {
+        transform: translateX(0px);
+        opacity: 100%;
+    }
+}
+
 html, body {
     padding: 0%;
     margin: auto;
@@ -47,29 +59,34 @@ body {
     grid-row: 1;
     display: grid;
     grid-template-columns: 40% 60%;
+    animation: XMotion 2s;
 }
 
 .lastName {
     grid-row: 2;
     display: grid;
     grid-template-columns: 40% 60%;
+    animation: XMotion 2.2s;
 }
 
 .email {
     grid-row: 3;
     display: grid;
     grid-template-columns: 40% 60%;
+    animation: XMotion 2.4s;
 }
 
 .password {
     grid-row: 4;
     display: grid;
     grid-template-columns: 40% 60%;
+    animation: XMotion 2.6s;
 }
 
 .buttons {
     grid-row: 5;
     margin-top: 10%;
+    animation: XMotion 2.8s;
 }
 
 #save, #cancel {
