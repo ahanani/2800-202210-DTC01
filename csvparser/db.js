@@ -20,6 +20,17 @@ function formatDate(unformattedDate){
   return formattedDate;
 }
 
+function cleanString(str){
+  let copy = str;
+  for(let i = 0; i < copy.length; ++i){
+    str = str.replace('"', " ");
+    str = str.replace("'", ' ');
+  }
+  return str;
+}
+
+
+
 
 
 function insert(purchaseDetails){
@@ -28,8 +39,8 @@ function insert(purchaseDetails){
   ${purchaseDetails["Account Number"] == '' ? ' NULL ': purchaseDetails["Account Number"]},
   '${formatDate(purchaseDetails["Transaction Date"])}',
   ${purchaseDetails["Cheque Number"] == '' ? ' NULL ': purchaseDetails["Cheque Number"]},
-   '${purchaseDetails["Description 1"] == '' ? ' NULL ': purchaseDetails["Description 1"]}',
-    ${purchaseDetails["Description 2"] == '' ? ' NULL ': purchaseDetails["Description 2"]},
+   '${purchaseDetails["Description 1"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 1"])}',
+    ${purchaseDetails["Description 2"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 2"])},
     ${parseFloat(purchaseDetails["CAD$"]) == NaN ? ' NULL ': parseFloat(purchaseDetails["CAD$"])}, 
     ${' NULL '});`//parseFloat(purchaseDetails["USD$"]) == NaN ? ' NULL ' : parseFloat(purchaseDetails["USD$"])
   connection.query(queryStatement, function (err, result) {

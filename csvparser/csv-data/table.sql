@@ -4,8 +4,8 @@ CREATE TABLE Csvlog (
     Accountnumber VARCHAR(3),
     Transactiondate DATE NOT NULL,
     Chequenumber VARCHAR(20),
-    Description1 VARCHAR(50),
-    Description2 VARCHAR(50),
-    Cad int,
-    Usd int,
+    Description1 VARCHAR(100),
+    Description2 VARCHAR(100),
+    Cad DECIMAL(6,2),
+    Usd DECIMAL(6,2),
     PRIMARY KEY(Purchaseid));
