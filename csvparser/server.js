@@ -5,9 +5,21 @@ const express = require('express');
 const app = express();
 const csvparser = require('./csvreader');
 const db = require('./db');
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use( bodyParser.json());
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + "/upload.html");
+});
+
+
+app.post('/expense', function(req, res){
+ 
+  db.connect();
+
+  const result = db.getExpensesWithin(req.body.startdate, req.body.enddate,(data)=>res.json(data));
 });
 
 app.post('/upload', function(req, res){
@@ -58,6 +70,8 @@ app.post('/upload', function(req, res){
           ;
          
         }
+
+        db.closeConnection();
        
         res.send(result);
       

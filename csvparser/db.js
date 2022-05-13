@@ -14,6 +14,10 @@ function connect(){
   });
 }
 
+function closeConnection(){
+  connection.close();
+}
+
 function formatDate(unformattedDate){
   let date = new Date(unformattedDate);
   let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
@@ -28,9 +32,6 @@ function cleanString(str){
   }
   return str;
 }
-
-
-
 
 
 function insert(purchaseDetails){
@@ -51,8 +52,28 @@ function insert(purchaseDetails){
 }
 
 
+//&&&&CUSTOM FUNCTIONS&&&&  
+
+function getExpensesWithin(startDateString, endDateString, next){
+  //SELECT * FROM table WHERE date_column >= '2014-01-01' AND date_column <= '2015-01-01';
+  const startDate = new Date(startDateString);
+  const endDate = new Date(endDateString);
+  if(startDate == 'Invalid Date' || endDate == 'Invalid Date'){
+    throw 'Invalid Date given';
+  }
+
+  const queryStatement = `USE dtc01; SELECT SUM(Cad) FROM csvlog WHERE 
+  Transactiondate >= '${formatDate(startDateString)}' AND Transactiondate <= '${formatDate(endDateString)}';`
+
+  connection.query(queryStatement, function (err, result) {
+    if (err) console.log(err);
+    next(Object.values(result[1][0])[0]);
+  });
+}
+
+
 module.exports = {
-  insert, connect
+  insert, connect, closeConnection, getExpensesWithin
 }
 
 // connection.query(`USE dtc01; CREATE TABLE Csvlog (

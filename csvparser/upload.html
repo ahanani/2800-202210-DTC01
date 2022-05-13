@@ -1,33 +1,46 @@
-<!-- <html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title> NodeJS File Upload Example </title>
-
-    <script>
-        async function uploadFile() {
-          let formData = new FormData(); 
-          formData.append("fileupload", fileupload.files[0]);
-          console.log('before posting');
-            await fetch('http://localhost:5000/upload', {
-            method: "POST", 
-            body: formData
-          }); 
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function specifyDate() {
+      $.ajax({
+        url: "http://localhost:5000/expense",
+        type: 'POST',
+        data: {'startdate': $('#startdate').val(), 'enddate': $('#enddate').val()},
+        success: function (res) {
+          $('#expenses').html(res);
+          console.log(res);
         }
-        </script>
-</head> -->
+      });
 
+      console.log($('#startdate').val(), $('#enddate').val());
+    }
+  </script>
+</head>
 
-    <form action="http://localhost:5000/upload" method="post" enctype="multipart/form-data">
-     
-      <input type="file" name="fileupload">
-      <br>
-      <input type="submit">
-    </form>
+<body>
 
+  <form action="http://localhost:5000/upload" method="post" enctype="multipart/form-data">
 
+    <input type="file" name="fileupload">
+    <br>
+    <input type="submit">
+  </form>
 
-    <!-- <input id="fileupload" type="file" name="fileupload" />
-    <button id="upload-button" onclick="uploadFile()"> Upload </button>
+  <div>
+    <input type="date" name="startdate" id="startdate" placeholder="start">
+    <input type="date" name="enddate" id="enddate" placeholder="end">
+    <input type="submit" name="" id="" value="submit" onclick="specifyDate()">
+  </div>
+
+  <div id="expenses"></div>
+
 </body>
 
-</html> -->
+</html>
