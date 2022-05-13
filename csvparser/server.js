@@ -18,12 +18,15 @@ app.post('/upload', function(req, res){
   //Process the file upload in Node
   form.parse(req, function (error, fields, file) {
     let filepath = file.fileupload.filepath;
-    let newpath = 'C:/Users/amin5/Desktop/myfeature/files/';
-    newpath += file.fileupload.originalFilename;
+    let newpath = __dirname + '/' + file.fileupload.originalFilename;
+    //newpath += file.fileupload.originalFilename;
     //Copy the uploaded file to a custom folder
     fs.rename(filepath, newpath, function () {
 
-      console.log(csvparser(newpath, (result)=>res.send(result)));
+      console.log(csvparser(newpath, (result)=>{
+        
+        fs.unlinkSync(newpath)
+        res.send(result)}));
 
 
       
