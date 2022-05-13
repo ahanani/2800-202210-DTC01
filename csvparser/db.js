@@ -25,6 +25,9 @@ function formatDate(unformattedDate){
 }
 
 function cleanString(str){
+  if(str == undefined){
+    return ' NULL ';
+  }
   let copy = str;
   for(let i = 0; i < copy.length; ++i){
     str = str.replace('"', " ");
@@ -39,7 +42,7 @@ function insert(purchaseDetails){
   VALUES('${purchaseDetails["Account Type"] == '' ? ' NULL ': purchaseDetails["Account Type"]}',
   ${purchaseDetails["Account Number"] == '' ? ' NULL ': purchaseDetails["Account Number"]},
   '${formatDate(purchaseDetails["Transaction Date"])}',
-  ${purchaseDetails["Cheque Number"] == '' ? ' NULL ': purchaseDetails["Cheque Number"]},
+  ${purchaseDetails["Cheque Number"] == '' ? ' NULL ': cleanString(purchaseDetails["Cheque Number"])},
    '${purchaseDetails["Description 1"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 1"])}',
     ${purchaseDetails["Description 2"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 2"])},
     ${purchaseDetails["CAD$"] == '' ? ' NULL ': parseFloat(purchaseDetails["CAD$"])}, 

@@ -66,12 +66,15 @@ app.post('/upload', function(req, res){
 
          
             db.insert(result[i]);
+
+            console.log(result[i], "thing");
+          
          
-          ;
+          
          
         }
 
-        db.closeConnection();
+        // db.closeConnection();
        
         res.send(result);
       
