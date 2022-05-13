@@ -14,13 +14,19 @@ function connect(){
   });
 }
 
+function formatDate(unformattedDate){
+  let date = new Date(unformattedDate);
+  let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+  return formattedDate;
+}
+
 
 
 function insert(purchaseDetails){
   const queryStatement = `USE dtc01; INSERT INTO csvlog(Accounttype, Accountnumber, Transactiondate, Chequenumber, Description1, Description2, Cad, Usd)\
   VALUES('${purchaseDetails["Account Type"] == '' ? ' NULL ': purchaseDetails["Account Type"]}',
   ${purchaseDetails["Account Number"] == '' ? ' NULL ': purchaseDetails["Account Number"]},
-  '${purchaseDetails["Transaction Date"] == '' ? ' NULL ': purchaseDetails["Transaction Date"]}',
+  '${formatDate(purchaseDetails["Transaction Date"])}',
   ${purchaseDetails["Cheque Number"] == '' ? ' NULL ': purchaseDetails["Cheque Number"]},
    '${purchaseDetails["Description 1"] == '' ? ' NULL ': purchaseDetails["Description 1"]}',
     ${purchaseDetails["Description 2"] == '' ? ' NULL ': purchaseDetails["Description 2"]},
