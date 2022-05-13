@@ -4,6 +4,7 @@ let fs = require('fs');
 const express = require('express');
 const app = express();
 const csvparser = require('./csvreader');
+const db = require('./db');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + "/upload.html");
@@ -12,6 +13,22 @@ app.get('/', function(req, res){
 app.post('/upload', function(req, res){
        //Create an instance of the form object
   let form = new formidable.IncomingForm();
+
+
+
+
+  function convert(arr){
+    let result = [];
+    for(let i = 1; i < arr.length; ++i){
+      let obj = {}
+        for(let j = 0; j < arr[i].length; ++j){
+          obj[arr[0][j]] = arr[i][j];
+        }
+        result.push(obj);
+    }
+
+    return result;
+  }
 
 
 
@@ -24,13 +41,26 @@ app.post('/upload', function(req, res){
     fs.rename(filepath, newpath, function () {
 
       console.log(csvparser(newpath, (result)=>{
+
+        result = convert(result);
         
         fs.unlinkSync(newpath)
-        res.send(result)}));
-
+        db.connect();
 
       
+
+        
+        for(let i = 0; i < result.length; ++i){
+
+         
+          
+          
+          db.insert(result[i]);
+        }
+       
+        res.send(result);
       
+      }));
       //res.send('NodeJS File Upload Success!');
     });
   });
