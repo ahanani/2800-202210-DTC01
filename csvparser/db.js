@@ -41,10 +41,10 @@ function insert(purchaseDetails){
   ${purchaseDetails["Cheque Number"] == '' ? ' NULL ': purchaseDetails["Cheque Number"]},
    '${purchaseDetails["Description 1"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 1"])}',
     ${purchaseDetails["Description 2"] == '' ? ' NULL ': cleanString(purchaseDetails["Description 2"])},
-    ${parseFloat(purchaseDetails["CAD$"]) == NaN ? ' NULL ': parseFloat(purchaseDetails["CAD$"])}, 
-    ${' NULL '});`//parseFloat(purchaseDetails["USD$"]) == NaN ? ' NULL ' : parseFloat(purchaseDetails["USD$"])
+    ${purchaseDetails["CAD$"] == '' ? ' NULL ': parseFloat(purchaseDetails["CAD$"])}, 
+    ${purchaseDetails["USD$"] == '' ? ' NULL ' : parseFloat(purchaseDetails["USD$"])});`
   connection.query(queryStatement, function (err, result) {
-    if (err) throw err;
+    if (err) console.log(err);;
     const output = JSON.stringify(result);
     console.log("Result: " + output);
   });

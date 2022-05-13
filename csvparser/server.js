@@ -53,9 +53,10 @@ app.post('/upload', function(req, res){
         for(let i = 0; i < result.length; ++i){
 
          
-          
-          
-          db.insert(result[i]);
+            db.insert(result[i]);
+         
+          ;
+         
         }
        
         res.send(result);
