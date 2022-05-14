@@ -64,7 +64,7 @@ function insertUser(userData) {
         if (err) console.log(err);
         console.log(result);
 
-        closeConnection();
+        //closeConnection();
     });
 }
 
