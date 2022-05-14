@@ -1,34 +1,24 @@
-
 function parseResultSet(resultset) {
 
-  parsedResult = [];
+    parsedResult = [];
 
-  for (let i = 0; i < resultset[1].length; ++i) {
+    for (let i = 0; i < resultset[1].length; ++i) {
 
-    parsedResult.push(Object.values(resultset[1][i]));
-  }
+        parsedResult.push(Object.values(resultset[1][i]));
+    }
 
-  return parsedResult;
+    return parsedResult;
 }
 
 function duplicateUserName(newUserName, parsedResultSet) {
-  for (let i = 0; i < parsedResultSet.length; ++i) {
-    if (parsedResultSet[i][0] == newUserName) {
-      return true;
+    for (let i = 0; i < parsedResultSet.length; ++i) {
+        if (parsedResultSet[i][0] == newUserName) {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -36,53 +26,67 @@ function duplicateUserName(newUserName, parsedResultSet) {
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "amin5",
-  password: "MySql1000$",
-  multipleStatements: true
+    host: "localhost",
+    user: "amin5",
+    password: "MySql1000$",
+    multipleStatements: true
 });
 
 function connect() {
-  connection.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected!");
-  });
+    connection.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
 }
 
 function closeConnection() {
-  connection.close();
+    connection.close();
 }
 
 function insertUser(userData) {
-  connect();
+    connect();
 
 
-  connection.query(`USE dtc01; SELECT username FROM user;`, function (err, result) {
-    if (err) console.log(err);
-    let duplicate = duplicateUserName(userData.username, parseResultSet(result));
-    if(duplicate){
-      throw "Duplicate username";
-    }});
+    connection.query(`USE dtc01; SELECT username FROM user;`, function(err, result) {
+        if (err) console.log(err);
+        let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+        if (duplicate) {
+            throw "Duplicate username";
+        }
+    });
 
 
 
-  const queryStatement = `USE dtc01; INSERT INTO user VALUES("${userData.username}", 
+    const queryStatement = `USE dtc01; INSERT INTO user VALUES("${userData.username}", 
     "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
 
-  connection.query(queryStatement, function (err, result) {
-    if (err) console.log(err);
-    console.log(result);
-  
-    closeConnection();
-  });
+    connection.query(queryStatement, function(err, result) {
+        if (err) console.log(err);
+        console.log(result);
+
+        closeConnection();
+    });
 }
 
-insertUser({username:'sam@hotmail.com', firstname:"Sam", lastname:"Fun", password:"123"});
+function validateUser(userCredentials, next) {
 
+
+    connect();
+
+
+    connection.query(`USE dtc01; SELECT * FROM user WHERE username = 
+    "${userCredentials.username}" AND password =  "${userCredentials.password}";`, function(err, result) {
+        if (err) console.log(err);
+
+        closeConnection();
+
+        next(result[1].length);
+    });
+}
 
 
 module.exports = {
-  connect, closeConnection, insertUser
+    insertUser,
+    validateUser
+
 }
-
-
