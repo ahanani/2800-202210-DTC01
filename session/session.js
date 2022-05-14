@@ -55,4 +55,27 @@ app.get('/logout', (req, res) => {
 });
 
 
+
+app.get('/signuppage', (req, res) => {
+    res.sendFile('views/signup.html', { root: __dirname })
+});
+
+app.post('/createaccount', (req, res) => {
+
+    if (req.body.username == undefined || req.body.firstname == undefined || req.body.lastname == undefined ||
+        req.body.password == undefined) {
+        res.send('form not completed');
+    }
+
+    sessiondb.insertUser({
+        username: req.body.username,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        password: req.body.password
+    });
+
+    res.send('created');
+});
+
+
 app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));
