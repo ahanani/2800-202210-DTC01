@@ -78,11 +78,13 @@ function validateUser(userCredentials, next) {
     "${userCredentials.username}" AND password =  "${userCredentials.password}";`, function(err, result) {
         if (err) console.log(err);
 
-        closeConnection();
-
+        //closeConnection();
         next(result[1].length);
     });
+
 }
+
+
 
 
 module.exports = {
