@@ -110,8 +110,6 @@ app.post('/makeaccount', (req, res) => {
 
 app.get('/registeraccount/:username', (req, res) => {
 
-    console.log(req.params.username, "received!!!");
-
     const userDetails = getUserDetails(req.params.username);
 
     if (!userDetails) {

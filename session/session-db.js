@@ -21,6 +21,34 @@ function duplicateUserName(newUserName, parsedResultSet) {
 }
 
 
+function formatDate(unformattedDate) {
+    let date = new Date(unformattedDate);
+    let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+    return '"' + formattedDate + '"';
+}
+
+function formatFloatItem(float) {
+
+    if (float == undefined || float == '') {
+        return 'NULL';
+    }
+    return parseFloat(float);
+}
+
+
+function formatStringItem(str) {
+    if (str == undefined || str == '') {
+        return ' NULL ';
+    }
+    let copy = str;
+    for (let i = 0; i < copy.length; ++i) {
+        str = str.replace('"', " ");
+        str = str.replace("'", ' ');
+    }
+    return '"' + str + '"'
+}
+
+
 
 //
 const mysql = require('mysql2');
@@ -69,10 +97,7 @@ function insertUser(userData) {
 }
 
 function validateUser(userCredentials, next) {
-
-
     connect();
-
 
     connection.query(`USE dtc01; SELECT * FROM user WHERE username = 
     "${userCredentials.username}" AND password =  "${userCredentials.password}";`, function(err, result) {
@@ -84,11 +109,31 @@ function validateUser(userCredentials, next) {
 
 }
 
+function insertCsvItem(username, csvItem) {
+    connect();
+    const queryStatement = `USE dtc01; INSERT INTO csvlog(Username, Accounttype, Accountnumber, 
+    Transactiondate, Chequenumber, Description1, Description2, Cad, Usd) VALUES(
+    ${formatStringItem(username)},
+    ${formatStringItem(csvItem["Account Type"])},
+    ${formatStringItem(csvItem["Account Number"])},
+    ${formatDate(csvItem["Transaction Date"])},
+    ${formatStringItem(csvItem["Cheque Number"])},
+    ${formatStringItem(csvItem["Description 1"])},
+    ${formatStringItem(csvItem["Description 2"])},
+    ${formatFloatItem(csvItem["CAD$"])}, 
+    ${formatFloatItem(csvItem["USD$"])});`
 
+    connection.query(queryStatement, function(err, result) {
+        if (err) console.log(err);;
+        const output = JSON.stringify(result);
+        console.log("DB returned after insertion: " + output);
+    });
+}
 
 
 module.exports = {
     insertUser,
-    validateUser
+    validateUser,
+    insertCsvItem
 
 }
