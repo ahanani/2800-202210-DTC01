@@ -8,80 +8,80 @@ const db = require('./db');
 const bodyParser = require('body-parser')
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use( bodyParser.json());
+app.use(bodyParser.json());
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + "/upload.html");
+app.get('/', function(req, res) {
+    res.sendFile(__dirname + "/upload.html");
 });
 
 
-app.post('/expense', function(req, res){
- 
-  db.connect();
+app.post('/expense', function(req, res) {
 
-  const result = db.getExpensesWithin(req.body.startdate, req.body.enddate,(data)=>res.json(data));
+    db.connect();
+
+    const result = db.getExpensesWithin(req.body.startdate, req.body.enddate, (data) => res.json(data));
 });
 
-app.post('/upload', function(req, res){
-       //Create an instance of the form object
-  let form = new formidable.IncomingForm();
+app.post('/upload', function(req, res) {
+    //Create an instance of the form object
+    let form = new formidable.IncomingForm();
 
 
 
 
-  function convert(arr){
-    let result = [];
-    for(let i = 1; i < arr.length; ++i){
-      let obj = {}
-        for(let j = 0; j < arr[i].length; ++j){
-          obj[arr[0][j]] = arr[i][j];
+    function convert(arr) {
+        let result = [];
+        for (let i = 1; i < arr.length; ++i) {
+            let obj = {}
+            for (let j = 0; j < arr[i].length; ++j) {
+                obj[arr[0][j]] = arr[i][j];
+            }
+            result.push(obj);
         }
-        result.push(obj);
+
+        return result;
     }
 
-    return result;
-  }
 
- 
 
-  //Process the file upload in Node
-  form.parse(req, function (error, fields, file) {
-    let filepath = file.fileupload.filepath;
-    let newpath = __dirname + '/' + file.fileupload.originalFilename;
-    //newpath += file.fileupload.originalFilename;
-    //Copy the uploaded file to a custom folder
-    fs.rename(filepath, newpath, function () {
+    //Process the file upload in Node
+    form.parse(req, function(error, fields, file) {
+        let filepath = file.fileupload.filepath;
+        let newpath = __dirname + '/' + file.fileupload.originalFilename;
+        //newpath += file.fileupload.originalFilename;
+        //Copy the uploaded file to a custom folder
+        fs.rename(filepath, newpath, function() {
 
-      console.log(csvparser(newpath, (result)=>{
+            console.log(csvparser(newpath, (result) => {
 
-        result = convert(result);
-        
-        fs.unlinkSync(newpath)
-        db.connect();
+                result = convert(result);
 
-      
+                fs.unlinkSync(newpath)
+                db.connect();
 
-        
-        for(let i = 0; i < result.length; ++i){
 
-         
-            db.insert(result[i]);
 
-            console.log(result[i], "thing");
-          
-         
-          
-         
-        }
 
-        // db.closeConnection();
-       
-        res.send(result);
-      
-      }));
-      //res.send('NodeJS File Upload Success!');
+                for (let i = 0; i < result.length; ++i) {
+
+
+                    db.insert(result[i]);
+
+                    console.log(result[i], "thing");
+
+
+
+
+                }
+
+                // db.closeConnection();
+
+                res.send(result);
+
+            }));
+            //res.send('NodeJS File Upload Success!');
+        });
     });
-  });
 });
 
 
@@ -149,7 +149,7 @@ app.listen(5000);
 //     console.log(req.query);
 
 //     res.send('hi');
-   
+
 // })
 
 
@@ -158,3 +158,67 @@ app.listen(5000);
 // const PORT = process.env.PORT || 5000;
 
 // app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+
+
+function convert(arr) {
+    let result = [];
+    for (let i = 1; i < arr.length; ++i) {
+        let obj = {}
+        for (let j = 0; j < arr[i].length; ++j) {
+            obj[arr[0][j]] = arr[i][j];
+        }
+        result.push(obj);
+    }
+
+    return result;
+}
+
+
+
+
+
+
+
+function formatResult(arr) {
+    let result = [];
+    for (let i = 1; i < arr.length; ++i) {
+        let obj = {}
+        for (let j = 0; j < arr[i].length; ++j) {
+            obj[arr[0][j]] = arr[i][j];
+        }
+        result.push(obj);
+    }
+
+    return result;
+}
+
+
+function perform(res, req) {
+    let form = new formidable.IncomingForm();
+    form.parse(req, function(error, fields, file) {
+        let filepath = file.fileupload.filepath;
+        let newpath = __dirname + '/' + file.fileupload.originalFilename;
+
+        fs.rename(filepath, newpath, function() {
+
+            csvparser(newpath, (result) => {
+
+                result = formatResult(result);
+
+                fs.unlinkSync(newpath)
+                db.connect();
+
+                for (let i = 0; i < result.length; ++i) {
+                    db.insert(result[i]);
+                }
+                res.send(result);
+            });
+        });
+    });
+}
+
+
+
+
+
+app.post('/upload', perform);

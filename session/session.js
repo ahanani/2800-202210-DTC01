@@ -4,6 +4,8 @@ const sessions = require('express-session');
 const app = express();
 const sessiondb = require('./session-db');
 const email = require('./email');
+const insertcsv = require('./insertcsv');
+app.set('view engine', 'ejs');
 const PORT = 5000;
 
 app.use(express.json());
@@ -39,10 +41,7 @@ function getUserDetails(username) {
 
 
 
-//validateUser
 
-//serving public file
-//app.use(express.static(__dirname));
 
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -56,11 +55,23 @@ app.use(sessions({
 
 app.get('/', (req, res) => {
     if (req.session.userid) {
-        res.send(`<p>Welcome User ${req.session.userid}</p> <a href=\'/logout'>click to logout</a>`);
+        //res.send(`<p>Welcome User ${req.session.userid}</p> <a href=\'/logout'>click to logout</a>`);
+        //res.sendFile('views/upload.html', { root: __dirname });
+        let usernamevalue = req.session.userid;
+        res.render('upload.ejs', { username: usernamevalue });
     } else
         res.sendFile('views/index.html', { root: __dirname })
 });
-//usernames.includes(req.body.username) && passwords.includes(req.body.password)
+
+
+app.post('/uploadfile', (req, res) => {
+    if (req.session.userid) {
+
+        insertcsv.insertPurchase(req, res, username);
+    } else
+        res.sendFile('views/index.html', { root: __dirname })
+});
+
 
 
 app.post('/user', (req, res) => {
@@ -70,8 +81,10 @@ app.post('/user', (req, res) => {
 
         if (valid) {
             req.session.userid = req.body.username;
-            console.log(req.session)
-            res.send(`<p>Welcome User ${req.session.userid}</p> <a href=\'/logout'>click to logout</a>`);
+            //res.send(`<p>Welcome User ${req.session.userid}</p> <a href=\'/logout'>click to logout</a>`);
+            //res.sendFile('views/upload.html', { root: __dirname });
+            let usernamevalue = req.session.userid;
+            res.render('upload', { username: usernamevalue });
         } else {
             res.send('Invalid username or password');
         }
@@ -129,22 +142,7 @@ app.get('/registeraccount/:username', (req, res) => {
 });
 
 
-// app.post('/createaccount', (req, res) => {
 
-//     if (req.body.username == undefined || req.body.firstname == undefined || req.body.lastname == undefined ||
-//         req.body.password == undefined) {
-//         res.send('form not completed');
-//     }
-
-//     sessiondb.insertUser({
-//         username: req.body.username,
-//         firstname: req.body.firstname,
-//         lastname: req.body.lastname,
-//         password: req.body.password
-//     });
-
-//     res.send('created');
-// });
 
 
 app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));

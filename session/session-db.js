@@ -106,7 +106,6 @@ function validateUser(userCredentials, next) {
         //closeConnection();
         next(result[1].length);
     });
-
 }
 
 function insertCsvItem(username, csvItem) {
