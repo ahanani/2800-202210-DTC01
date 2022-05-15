@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
 app.post('/uploadfile', (req, res) => {
     if (req.session.userid) {
 
-        insertcsv.insertPurchase(req, res, username);
+        insertcsv.insertPurchase(req, res, req.session.userid);
     } else
         res.sendFile('views/index.html', { root: __dirname })
 });

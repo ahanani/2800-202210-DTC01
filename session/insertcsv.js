@@ -1,6 +1,7 @@
 const fs = require('fs');
 const parsemod = require('csv-parse');
 const sessiondb = require('./session-db');
+const formidable = require('formidable');
 const parse = parsemod.parse;
 
 function csvParser(path, next) {
@@ -14,7 +15,6 @@ function csvParser(path, next) {
             next(csvData);
 
         }).on('error', (err) => console.log(err));
-
 
 }
 
@@ -32,7 +32,7 @@ function formatResult(arr) {
 }
 
 
-function insertPurchase(res, req, username) {
+function insertPurchase(req, res, username) {
     let form = new formidable.IncomingForm();
     form.parse(req, function(error, fields, file) {
         let filepath = file.fileupload.filepath;
@@ -40,20 +40,65 @@ function insertPurchase(res, req, username) {
 
         fs.rename(filepath, newpath, function() {
 
-            csvparser(newpath, (result) => {
+
+
+
+
+            csvParser(newpath, (result) => {
 
                 result = formatResult(result);
 
                 fs.unlinkSync(newpath)
-                sessiondb.connect();
 
                 for (let i = 0; i < result.length; ++i) {
                     sessiondb.insertCsvItem(username, result[i]);
                 }
                 res.send(result);
             });
+
         });
     });
 }
 
 module.exports = { insertPurchase };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// csvparser(newpath, (result) => {
+
+//     result = formatResult(result);
+
+//     fs.unlinkSync(newpath)
+//     sessiondb.connect();
+
+//     for (let i = 0; i < result.length; ++i) {
+//         sessiondb.insertCsvItem(username, result[i]);
+//     }
+//     res.send(result);
+// });
+
+
+// csvparser(newpath, (result) => {
+
+//     result = formatResult(result);
+
+//     fs.unlinkSync(newpath)
+//     sessiondb.connect();
+
+//     for (let i = 0; i < result.length; ++i) {
+//         sessiondb.insertCsvItem(username, result[i]);
+//     }
+//     res.send(result);
+// });
