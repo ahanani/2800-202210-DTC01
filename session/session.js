@@ -174,4 +174,12 @@ app.post('/adminupload', function(req, res) {
 });
 
 
+app.get('/carddetails', (req, res) => {
+    if (req.session.userid) {
+        sessiondb.retrieveCardDetails(req.session.userid, res)
+    } else
+        res.send('Error user not logged in')
+});
+
+
 app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));

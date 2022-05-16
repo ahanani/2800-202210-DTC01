@@ -167,7 +167,7 @@ function insertCompany(companyDetails) {
     });
 }
 
-function retrieveCompanyPurchase(username) {
+function retrieveCardDetails(username, res) {
     connect();
     connection.query(`USE dtc01; SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(username)};`, function(err, result) {
         // console.log(parseResultSet(result));
@@ -175,11 +175,12 @@ function retrieveCompanyPurchase(username) {
         const cardDetails = [];
         for (let i = 0; i < cards.length; ++i) {
             //console.log(`USE dtc01; SELECT Transactiondate, Chequenumber, Description1, Description2, Cad, Usd  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`);
-            connection.query(`USE dtc01; SELECT Transactiondate, Chequenumber, Description1, Description2, Cad, Usd  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function(err, result) {
+            connection.query(`USE dtc01; SELECT *  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function(err, result) {
                 cardDetails.push(parseResultSet(result));
                 //console.log(parseResultSet(result));
                 if (i == cards.length - 1) {
-                    console.log(cardDetails);
+                    //console.log(cardDetails);
+                    res.send(cardDetails);
                 }
             });
         }
@@ -187,7 +188,7 @@ function retrieveCompanyPurchase(username) {
 }
 
 
-retrieveCompanyPurchase('ali.javadi101010@gmail.com');
+//retrieveCompanyPurchase('ali.javadi101010@gmail.com');
 
 
 
@@ -195,5 +196,6 @@ module.exports = {
     insertUser,
     validateUser,
     insertCsvItem,
-    insertCompany
+    insertCompany,
+    retrieveCardDetails
 }
