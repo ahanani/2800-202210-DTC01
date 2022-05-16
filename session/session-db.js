@@ -167,7 +167,6 @@ function insertCompany(companyName, companyDetails) {
     });
 }
 
-insertCompany("burger king", { companyindustry: "fast food", companydescription: "junk fast food company" });
 
 
 module.exports = {

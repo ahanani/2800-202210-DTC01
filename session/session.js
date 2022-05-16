@@ -6,7 +6,7 @@ const sessiondb = require('./session-db');
 const email = require('./email');
 const insertcsv = require('./insertcsv');
 app.set('view engine', 'ejs');
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -115,7 +115,9 @@ app.post('/makeaccount', (req, res) => {
 
     userVal(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
 
-    const emailBody = `<a href = "localhost:5000/registeraccount/${req.body.username}">Validate Email</a>`;
+    // const emailBody = `<a href = "localhost:5000/registeraccount/${req.body.username}">Validate Email</a>`;
+    const emailBody = `localhost:5000/registeraccount/${req.body.username}`;
+
 
     email.sentEmail(req.body.username, 'Dollar Track Email Validation', emailBody);
     res.send('check your email');
@@ -129,7 +131,6 @@ app.get('/registeraccount/:username', (req, res) => {
         res.send('session expired');
 
     } else {
-
         sessiondb.insertUser({
             username: req.params.username,
             firstname: userDetails[req.params.username][0],
@@ -140,9 +141,37 @@ app.get('/registeraccount/:username', (req, res) => {
         res.send('user validated');
     }
 });
+///////////
+
+app.get('/adminlogin', function(req, res) {
+    res.sendFile('views/admin-login.html', { root: __dirname })
+});
 
 
+app.post('/adminpage', (req, res) => {
+    sessiondb.validateUser({ username: req.body.username, password: req.body.password }, function(valid) {
 
+        console.log(req.body.username, req.body.password);
+
+        if (valid && req.body.username == 'admin') {
+            req.session.userid = req.body.username;
+            let usernamevalue = req.session.userid;
+            res.render('admin-page');
+        } else {
+            res.send('Invalid username or password');
+        }
+
+    });
+})
+app.post('/adminupload', function(req, res) {
+
+    if (req.session.userid == 'admin') {
+
+        insertcsv.insertCompany(req, res);
+    } else
+        res.sendFile('views/admin-login.html', { root: __dirname })
+
+});
 
 
 app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));

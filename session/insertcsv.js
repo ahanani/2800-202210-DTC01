@@ -39,11 +39,6 @@ function insertPurchase(req, res, username) {
         let newpath = __dirname + '/' + file.fileupload.originalFilename;
 
         fs.rename(filepath, newpath, function() {
-
-
-
-
-
             csvParser(newpath, (result) => {
 
                 result = formatResult(result);
@@ -60,7 +55,28 @@ function insertPurchase(req, res, username) {
     });
 }
 
-module.exports = { insertPurchase };
+
+
+function insertCompany(req, res) {
+    let form = new formidable.IncomingForm();
+    form.parse(req, function(error, fields, file) {
+        let filepath = file.fileupload.filepath;
+        let newpath = __dirname + '/' + file.fileupload.originalFilename;
+
+        fs.rename(filepath, newpath, function() {
+            csvParser(newpath, (result) => {
+
+                fs.unlinkSync(newpath)
+
+
+                res.send(result);
+            });
+
+        });
+    });
+}
+
+module.exports = { insertPurchase, insertCompany };
 
 
 
