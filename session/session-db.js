@@ -144,20 +144,20 @@ function insertCsvItem(username, csvItem) {
     });
 }
 
-function insertCompany(companyName, companyDetails) {
+function insertCompany(companyDetails) {
     connect();
 
     connection.query(`USE dtc01; SELECT Companyname FROM company;`, function(err, result) {
         if (err) console.log(err);
-        let duplicate = duplicateCompany(companyName, parseResultSet(result));
+        let duplicate = duplicateCompany(companyDetails[0], parseResultSet(result));
         if (duplicate) {
             throw "Duplicate comapny name";
         }
     });
 
-    const queryStatement = `USE dtc01; INSERT INTO Company(Companyname, Companyindustry, Companydescription) VALUES(${formatStringItem(companyName)}, 
-        ${formatStringItem(companyDetails.companyindustry)}, 
-        ${formatStringItem(companyDetails.companydescription)});`;
+    const queryStatement = `USE dtc01; INSERT INTO Company(Companyname, Companyindustry, Companydescription) VALUES(${formatStringItem(companyDetails[0])}, 
+        ${formatStringItem(companyDetails[1])}, 
+        ${formatStringItem(companyDetails[2])});`;
 
     connection.query(queryStatement, function(err, result) {
         if (err) console.log(err);

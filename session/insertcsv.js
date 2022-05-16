@@ -68,6 +68,9 @@ function insertCompany(req, res) {
 
                 fs.unlinkSync(newpath)
 
+                for (let i = 1; i < result.length; ++i) {
+                    sessiondb.insertCompany(result[i]);
+                }
 
                 res.send(result);
             });
