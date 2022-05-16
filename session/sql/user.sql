@@ -4,3 +4,5 @@ firstname varchar(20) NOT NULL,
 lastname varchar(20) NOT NULL,
 password varchar(20) NOT NULL,
 PRIMARY KEY(username ));
+
+INSERT INTO user VALUES('admin', 'admin', 'admin', '123');

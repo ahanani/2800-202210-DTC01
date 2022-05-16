@@ -167,6 +167,28 @@ function insertCompany(companyDetails) {
     });
 }
 
+function retrieveCompanyPurchase(username) {
+    connect();
+    connection.query(`USE dtc01; SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(username)};`, function(err, result) {
+        // console.log(parseResultSet(result));
+        const cards = parseResultSet(result);
+        const cardDetails = [];
+        for (let i = 0; i < cards.length; ++i) {
+            //console.log(`USE dtc01; SELECT Transactiondate, Chequenumber, Description1, Description2, Cad, Usd  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`);
+            connection.query(`USE dtc01; SELECT Transactiondate, Chequenumber, Description1, Description2, Cad, Usd  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function(err, result) {
+                cardDetails.push(parseResultSet(result));
+                //console.log(parseResultSet(result));
+                if (i == cards.length - 1) {
+                    console.log(cardDetails);
+                }
+            });
+        }
+    });
+}
+
+
+retrieveCompanyPurchase('ali.javadi101010@gmail.com');
+
 
 
 module.exports = {
@@ -174,5 +196,4 @@ module.exports = {
     validateUser,
     insertCsvItem,
     insertCompany
-
 }
