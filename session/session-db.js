@@ -215,7 +215,7 @@ function retrieveCardDetails(username, res) {
 }
 
 
-//retrieveCompanyPurchase('ali.javadi101010@gmail.com');
+
 
 
 
