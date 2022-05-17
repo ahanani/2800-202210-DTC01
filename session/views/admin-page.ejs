@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function specifyDate() {
+            $.ajax({
+                url: "http://localhost:5000/adminupload",
+                type: 'POST',
+                data: {
+                    'fileupload': $('#fileupload').val(),
+                    'password': $('#password').val()
+                },
+                success: function(res) {
+                    console.log(res);
+                }
+            });;
+        }
+    </script>
+</head>
+
+<body>
+
+    </p> <a href='/logout'>click to logout</a>
+
+    <form action="http://localhost:5000/adminupload" method="post" enctype="multipart/form-data">
+
+        <input type="file" name="fileupload" id="fileupload">
+        <input type="submit" value="submit">
+    </form>
+
+</body>
+
+</html>
