@@ -9,15 +9,14 @@
 
 <body>
     <img id="logo" src="/Dollar-Track.png" alt="Dollar Track">
-    <div id="loginInput">
+    <form action="/user" method="post">
         <h1>Welcome To DollarTrack!</h1>
-        <label for="userId" id="userIdLable">Username</label>
-        <input type="text" id="userId">
-        <label for="userPassword" id="userPasswordLable">Password</label>
-        <input type="password" id="userPassword">
+        <label for="username" id="userIdLable">Username</label>
+        <input type="text" name="username" id="username">
+        <label for="password" id="userPasswordLable">Password</label>
+        <input type="password" name="password" id="password">
         <input type="submit" value="Login" id="submit">
-        <script type="text/javascript" src="/login.js"></script>
-    </div>
+    </form>
 </body>
 
 </html>

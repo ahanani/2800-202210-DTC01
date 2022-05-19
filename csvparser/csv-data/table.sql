@@ -1,5 +1,6 @@
-CREATE TABLE Csvlog (
+CREATE TABLE IF NOT EXISTS Csvlog (
     Purchaseid int NOT NULL AUTO_INCREMENT,
+    Username VARCHAR(30) NOT NULL,
     Accounttype VARCHAR(10),
     Accountnumber VARCHAR(3),
     Transactiondate DATE NOT NULL,
@@ -8,4 +9,4 @@ CREATE TABLE Csvlog (
     Description2 VARCHAR(100),
     Cad DECIMAL(6,2),
     Usd DECIMAL(6,2),
-    PRIMARY KEY(Purchaseid));
+    PRIMARY KEY(Purchaseid, Username));

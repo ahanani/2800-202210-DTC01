@@ -77,8 +77,8 @@ const connection = mysql.createConnection({
     multipleStatements: true
 });
 
-function connect() {
-    connection.connect(function(err) {
+async function connect() {
+    connection.connect(function (err) {
         if (err) throw err;
         console.log("Connected!");
     });
@@ -99,7 +99,7 @@ function insertUser(userData) {
     connect();
 
 
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function(err, result) {
+    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function (err, result) {
         if (err) console.log(err);
         let duplicate = duplicateUserName(userData.username, parseResultSet(result));
         if (duplicate) {
@@ -110,7 +110,7 @@ function insertUser(userData) {
     const queryStatement = `CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; INSERT INTO user VALUES("${userData.username}", 
     "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
 
-    connection.query(queryStatement, function(err, result) {
+    connection.query(queryStatement, function (err, result) {
         if (err) console.log(err);
         console.log(result);
 
@@ -118,16 +118,18 @@ function insertUser(userData) {
     });
 }
 
-function validateUser(userCredentials, next) {
-    connect();
+async function validateUser(userCredentials) {
+    await connect();
 
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; SELECT * FROM user WHERE username LIKE
-    "%${userCredentials.username}%" AND password =  ${userCredentials.password};`, function(err, result) {
-        if (err) console.log(err);
+    const data = connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; SELECT * FROM user WHERE username =
+    "${userCredentials.username}" AND password =  "${userCredentials.password}";`, async function (err, result) {
+        if (err) {
+            console.log(err);
+        }
+    })
 
-        //closeConnection();
-        next(result[1].length);
-    });
+    console.log(JSON.p(data.values));
+    return;
 }
 
 var createCSVLogTable = `CREATE TABLE IF NOT EXIST Csvlog (
@@ -157,7 +159,7 @@ function insertCsvItem(username, csvItem) {
     ${formatFloatItem(csvItem["CAD$"])}, 
     ${formatFloatItem(csvItem["USD$"])});`
 
-    connection.query(queryStatement, function(err, result) {
+    connection.query(queryStatement, function (err, result) {
         if (err) console.log(err);;
         const output = JSON.stringify(result);
         console.log("DB returned after insertion: " + output);
@@ -174,7 +176,7 @@ var createCompanyDataBase = `CREATE TABLE IF NOT EXISTS Company(
 function insertCompany(companyDetails) {
     connect();
 
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCompanyDataBase};SELECT Companyname FROM company;`, function(err, result) {
+    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCompanyDataBase}; SELECT Companyname FROM company;`, function (err, result) {
         if (err) console.log(err);
         let duplicate = duplicateCompany(companyDetails[0], parseResultSet(result));
         if (duplicate) {
@@ -186,9 +188,9 @@ function insertCompany(companyDetails) {
         ${formatStringItem(companyDetails[1])}, 
         ${formatStringItem(companyDetails[2])});`;
 
-    connection.query(queryStatement, function(err, result) {
+    connection.query(queryStatement, function (err, result) {
         if (err) console.log(err);
-        console.log(result);
+        // console.log(result);
 
         //closeConnection();
     });
@@ -196,13 +198,13 @@ function insertCompany(companyDetails) {
 
 function retrieveCardDetails(username, res) {
     connect();
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCSVLogTable};SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(username)};`, function(err, result) {
+    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCSVLogTable};SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(username)};`, function (err, result) {
         // console.log(parseResultSet(result));
         const cards = parseResultSet(result);
         const cardDetails = [];
         for (let i = 0; i < cards.length; ++i) {
             //console.log(`USE dtc01; SELECT Transactiondate, Chequenumber, Description1, Description2, Cad, Usd  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`);
-            connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; ${createCSVLogTable};USE dtc01; SELECT *  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function(err, result) {
+            connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; ${createCSVLogTable};USE dtc01; SELECT *  FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function (err, result) {
                 cardDetails.push(parseResultSet(result));
                 //console.log(parseResultSet(result));
                 if (i == cards.length - 1) {
@@ -213,11 +215,6 @@ function retrieveCardDetails(username, res) {
         }
     });
 }
-
-
-
-
-
 
 module.exports = {
     insertUser,

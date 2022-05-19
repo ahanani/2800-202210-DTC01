@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node session.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "fs": "^0.0.1-security",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
-    "nodemailer": "^6.7.5"
+    "nodemailer": "^6.7.5",
+    "readstream": "^0.0.1"
   }
 }

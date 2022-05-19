@@ -42,16 +42,16 @@ h1 {
     margin: auto;
     animation: XMotion 2s;
 }
-
-#loginInput {
+form {
     grid-column: 2;
     grid-row: 3;
     display: grid;
     grid-template-rows: auto auto auto auto;
     animation: XMotion 2s;
+    height: 100%;
 }
 
-#userId {
+#username {
     grid-row: 2;
     height: 30%;
     padding-left: 3%;
@@ -68,7 +68,7 @@ h1 {
     margin: auto;
 }
 
-#userPassword {
+#password {
     grid-row: 3;
     height: 30%;
     padding-left: 3%;
