@@ -97,6 +97,26 @@ form {
     color: white;
 }
 
+#submit:hover {
+    cursor: pointer;
+}
+
+#signUp {
+    grid-column: 2;
+    grid-row: 4;
+    font-style: italic;
+    margin: 0% auto auto auto;
+    animation: XMotion 2s;
+}
+
+span {
+    font-weight: bold;
+}
+
+span:hover {
+    cursor: pointer;
+}
+
 @media screen and (max-width: 550px) {
     body {
         display: grid;

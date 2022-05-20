@@ -40,12 +40,87 @@ app.use(sessions({
     resave: true,
 }));
 
+
+var users = []
+
+function userVal(username, userDetails) {
+    const obj = {};
+    obj[username] = userDetails;
+    users.push(obj);
+    setTimeout(function() {
+        for (let i = 0; i < users.length; ++i) {
+            if (users[i][username]) {
+                users[i] = undefined;
+            }
+        }
+    }, 1000 * 60 * 60);
+}
+
+function getUserDetails(username) {
+    for (let i = 0; i < users.length; ++i) {
+        if (users[i][username]) {
+            const result = users[i];
+            users[i] = undefined;
+            return result;
+        }
+    }
+
+    return undefined;
+}
+
 function userAuthentication(req, res, next) {
     if (req.session.loginStatus) {
         next();
     } else {
         res.status(401).send("Access denied!");
     }
+}
+
+
+function duplicateUserName(newUserName, parsedResultSet) {
+    for (let i = 0; i < parsedResultSet.length; ++i) {
+        if (parsedResultSet[i][0] == newUserName) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function parseResultSet(resultset) {
+
+    if (resultset == undefined) {
+        return undefined;
+    }
+
+    parsedResult = [];
+
+    for (let i = 0; i < resultset[1].length; ++i) {
+
+        parsedResult.push(Object.values(resultset[1][i]));
+    }
+
+    return parsedResult;
+}
+
+function insertUser(userData) {
+
+
+    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function (err, result) {
+        if (err) console.log(err);
+        let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+        if (duplicate) {
+            throw "Duplicate username";
+        }
+    });
+
+    const queryStatement = `CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; INSERT INTO user VALUES("${userData.username}", 
+    "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
+
+    connection.query(queryStatement, function (err, result) {
+        if (err) console.log(err);
+        console.log(result);
+    });
 }
 
 var createUserTable = `CREATE TABLE IF NOT EXISTS user(
@@ -74,9 +149,13 @@ app.post("/user", (req, res) => {
             res.redirect(`/landingPage/${results[1]}`);
         } else {
             req.session.loginStatus = false;
-            res.status(401).send("Access denied!");
+            res.status(401);
         }
     });
+});
+
+app.get("/signUpPage", (req, res) => {
+    res.sendFile(`${__dirname}/html/signup.html`);
 });
 
 app.get("/landingPage/:user", userAuthentication, (req, res) => {
@@ -140,9 +219,10 @@ app.get("/userDetails/:date", userAuthentication, (req, res) => {
         res.send(result[3]);
     })
 
-})
+});
 
 app.get("/userProfile", userAuthentication, (req, res) => {
+    console.log("user profile got clicked!");
     res.sendFile(__dirname + "/html/profilePage.html");
 });
 
@@ -161,80 +241,42 @@ app.post("/editDataBase", (req, res) => {
             console.log(err);
         }
     });
-})
+});
 
 
-// app.post('/user', (req, res) => {
-//     sessiondb.validateUser({
-//         username: req.body.username,
-//         password: req.body.password
-//     }, function (valid) {
+app.post('/makeaccount', (req, res) => {
 
-//         console.log(req.body.username, req.body.password);
-//         console.log(valid);
+    if (req.body.username == undefined || req.body.firstname == undefined || req.body.lastname == undefined ||
+        req.body.password == undefined) {
+        res.send('form not completed');
+    }
 
-//         if (valid) {
-//             req.session.userid = req.body.username;
-//             let usernamevalue = req.session.userid;
-//             res.render(__dirname + "/views/upload.ejs", {
-//                 username: usernamevalue
-//             });
-//         } else {
-//             res.send('Invalid username or password');
-//         }
-
-//     });
-// })
+    userVal(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
+    const emailBody = `/registeraccount/${req.body.username}`;
 
 
-// app.get('/logout', (req, res) => {
-//     req.session.destroy();
-//     res.redirect('/');
-// });
+    email.sentEmail(req.body.username, 'Dollar Track Email Validation', emailBody);
+    res.send('check your email');
+});
 
+app.get('/registeraccount/:username',(req, res) => {
 
+    const userDetails = getUserDetails(req.params.username);
 
-// app.get('/signuppage', (req, res) => {
-//     res.sendFile('views/signup.html', {
-//         root: __dirname
-//     })
-// });
+    if (!userDetails) {
+        res.send('session expired');
 
+    } else {
+        insertUser({
+            username: req.params.username,
+            firstname: userDetails[req.params.username][0],
+            lastname: userDetails[req.params.username][1],
+            password: userDetails[req.params.username][2]
+        });
 
-
-// app.post('/makeaccount', (req, res) => {
-
-//     if (req.body.username == undefined || req.body.firstname == undefined || req.body.lastname == undefined ||
-//         req.body.password == undefined) {
-//         res.send('form not completed');
-//     }
-
-//     userVal(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
-//     const emailBody = `localhost:5000/registeraccount/${req.body.username}`;
-
-
-//     email.sentEmail(req.body.username, 'Dollar Track Email Validation', emailBody);
-//     res.send('check your email');
-// });
-
-// app.get('/registeraccount/:username', (req, res) => {
-
-//     const userDetails = getUserDetails(req.params.username);
-
-//     if (!userDetails) {
-//         res.send('session expired');
-
-//     } else {
-//         sessiondb.insertUser({
-//             username: req.params.username,
-//             firstname: userDetails[req.params.username][0],
-//             lastname: userDetails[req.params.username][1],
-//             password: userDetails[req.params.username][2]
-//         });
-
-//         res.send('user validated');
-//     }
-// });
+        res.send('user validated');
+    }
+});
 
 // app.get('/adminlogin', function (req, res) {
 //     res.sendFile('views/admin-login.html', {

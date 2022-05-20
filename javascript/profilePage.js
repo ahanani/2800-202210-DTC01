@@ -25,7 +25,6 @@ function setup() {
         type: "get",
         url: "/userProfileDetails",
         success: function (response) {
-            console.log($("#firstName"));
             $("#firstName").val(response[0].firstname).attr("disabled", true);
             $("#lastName").val(response[0].lastname).attr("disabled", true);
             $("#email").val(response[0].username).attr("disabled", true);
