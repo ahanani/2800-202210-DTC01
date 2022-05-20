@@ -160,18 +160,18 @@ app.listen(5000);
 // app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
 
 
-function convert(arr) {
-    let result = [];
-    for (let i = 1; i < arr.length; ++i) {
-        let obj = {}
-        for (let j = 0; j < arr[i].length; ++j) {
-            obj[arr[0][j]] = arr[i][j];
-        }
-        result.push(obj);
-    }
+// function convert(arr) {
+//     let result = [];
+//     for (let i = 1; i < arr.length; ++i) {
+//         let obj = {}
+//         for (let j = 0; j < arr[i].length; ++j) {
+//             obj[arr[0][j]] = arr[i][j];
+//         }
+//         result.push(obj);
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
 
 
