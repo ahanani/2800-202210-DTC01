@@ -14,10 +14,11 @@ app.use(express.static('html'));
 
 
 let connection = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'password',
-    database: 'COMP2800_Project'
+    host:"us-cdbr-east-05.cleardb.net",
+    user:"b4340ddf7668cd",
+    password:"2f4f0497",
+    database:"heroku_efc2db8e4f0d9a8",
+    multipleStatements: true
 });
 
 app.get("/", function (req, res) {

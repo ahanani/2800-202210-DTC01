@@ -16,9 +16,10 @@ app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 3000;
 
 const connection = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    password: "password",
+    host:"us-cdbr-east-05.cleardb.net",
+    user:"b4340ddf7668cd",
+    password:"2f4f0497",
+    database:"heroku_efc2db8e4f0d9a8",
     multipleStatements: true
 });
 
