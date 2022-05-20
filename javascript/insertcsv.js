@@ -94,7 +94,7 @@ function insertPurchase(req, res, username) {
                 for (let i = 0; i < result.length; ++i) {
                     insertCsvItem(username, result[i]);
                 }
-                res.send(result);
+                res.redirect(`/landingPage/${req.session.name}`);
             });
 
         });
