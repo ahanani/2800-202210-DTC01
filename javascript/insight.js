@@ -88,14 +88,10 @@ function populateRows(data) {
 }
 
 
-
-
-
-
 async function getTransactions() {
     await $.ajax({
         type: "GET",
-        url: "http://localhost:3000/insight/data",
+        url: "/insight/data",
         success: populateRows
     })
 

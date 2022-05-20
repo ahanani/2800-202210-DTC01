@@ -47,7 +47,7 @@ function userVal(username, userDetails) {
     const obj = {};
     obj[username] = userDetails;
     users.push(obj);
-    setTimeout(function() {
+    setTimeout(function () {
         for (let i = 0; i < users.length; ++i) {
             if (users[i][username]) {
                 users[i] = undefined;
@@ -158,11 +158,15 @@ app.get("/signUpPage", (req, res) => {
     res.sendFile(`${__dirname}/html/signup.html`);
 });
 
-app.get("/landingPage/:user", userAuthentication, (req, res) => {
+app.get("/landingPage/:user", userAuthentication,(req, res) => {
     console.log(`Sent landing page html to ${req.params.user}`);
     res.render(__dirname + "/views/landingPage.ejs", {
         user: `${req.params.user}`
     });
+});
+
+app.get("/addCardButton", userAuthentication, (req, res) => {
+    res.status(200).send();
 });
 
 app.get("/addCard", userAuthentication, (req, res) => {
@@ -172,7 +176,7 @@ app.get("/addCard", userAuthentication, (req, res) => {
     res.send();
 });
 
-app.get("/logout", (req, res) => {
+app.get("/logout", userAuthentication, (req, res) => {
     req.session.destroy();
     console.log(`Distroyed session with id ${req.sessionID}`);
     res.redirect("/");
@@ -183,18 +187,18 @@ app.post('/uploadfile', userAuthentication, (req, res) => {
     insertcsv.insertPurchase(req, res, req.session.user);
 });
 
-app.get('/report', userAuthentication, (req, res) => {
-    console.log("This happens!");
-    res.render(__dirname + "/views/reports.ejs", {
-        user: `${req.session.name}`
-    }, (err, html) => {
-        if (err) {
-            console.log(err);
-        }
-        res.send(html);
-    });
-    res.send();
-});
+// app.get('/report', userAuthentication, (req, res) => {
+//     console.log("This happens!");
+//     res.render(__dirname + "/views/reports.ejs", {
+//         user: `${req.session.name}`
+//     }, (err, html) => {
+//         if (err) {
+//             console.log(err);
+//         }
+//         res.send(html);
+//     });
+//     res.send();
+// });
 
 let createCsvLog = `CREATE TABLE IF NOT EXISTS Csvlog (
     Purchaseid int NOT NULL AUTO_INCREMENT,
@@ -221,9 +225,12 @@ app.get("/userDetails/:date", userAuthentication, (req, res) => {
 
 });
 
+app.post("/userProfileButton", userAuthentication, (req, res) => {
+    res.status(200).send();
+});
+
 app.get("/userProfile", userAuthentication, (req, res) => {
-    console.log("user profile got clicked!");
-    res.sendFile(__dirname + "/html/profilePage.html");
+    res.sendFile(__dirname+ "/html/profilePage.html");
 });
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
@@ -235,7 +242,7 @@ app.get("/userProfileDetails", userAuthentication, (req, res) => {
     });
 });
 
-app.post("/editDataBase", (req, res) => {
+app.post("/editDataBase", userAuthentication,(req, res) => {
     connection.query(`USE dtc01; UPDATE user SET firstname = '${req.body.firstName}', lastname = '${req.body.lastName}' WHERE username LIKE '%${req.session.user}%'`, (err, result) => {
         if (err) {
             console.log(err);
@@ -259,7 +266,7 @@ app.post('/makeaccount', (req, res) => {
     res.send('check your email');
 });
 
-app.get('/registeraccount/:username',(req, res) => {
+app.get('/registeraccount/:username', (req, res) => {
 
     const userDetails = getUserDetails(req.params.username);
 
@@ -277,6 +284,30 @@ app.get('/registeraccount/:username',(req, res) => {
         res.redirect("/");
     }
 });
+
+app.get("/insight", userAuthentication, function (req, res) {
+    res.sendFile(__dirname + '/html/insight.html');
+});
+
+app.get("/insight/data", function (req, res) {
+    connection.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function (err, result, fields) {
+        if (err) throw err;
+        console.log(result[0]["SUM(Cad)"]);
+        res.send(result)
+    });
+})
+
+app.get("/expenses", userAuthentication, function (req, res) {
+    res.sendFile(__dirname + '/html/expenses.html');
+})
+
+app.get("/expenses/data", userAuthentication, function (req, res) {
+    connection.query("SELECT * FROM Csvlog ORDER BY Purchaseid DESC", function (err, result, fields) {
+        if (err) throw err;
+        console.log(result[0].Purchaseid);
+        res.send(result);
+    });
+})
 
 // app.get('/adminlogin', function (req, res) {
 //     res.sendFile('views/admin-login.html', {

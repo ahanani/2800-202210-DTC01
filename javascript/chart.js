@@ -4,21 +4,8 @@ xhttp.onreadystatechange = () => {
         // Received csv file
         let csv_data = xhttp.responseText;
         
-        // Break up CSV by lines
         csv_data = csv_data.split("\n");
-        // Now break up each individual line by commas
         csv_data = csv_data.map(line => line.split(",")).slice(1);
-
-        // Now csv_data contains the CSV data of my_transactions in the following format:
-        /**
-         * [[MasterCard, 4/17/2022, -3.36],
-         *  [MasterCard, 4/18/2022, -12.85],
-         *  ...
-         *  [MasterCard, 5/4/2022, -79.79]]
-         * */
-        /**
-         * { MasterCard: [total spendings of MasterCard], VISA}
-         */
         let obj = {};
         for(let i = 0; i < csv_data.length; i++) {
             if(csv_data[i][0]) {

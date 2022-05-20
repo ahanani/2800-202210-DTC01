@@ -60,14 +60,14 @@ function setup() {
         'grid-row': '1 / span 4',
         'display': 'grid',
         'grid-template-columns': '30% 40% 30%',
-        'grid-template-rows': '10% 10% 70% 10%',
+        'grid-template-rows': '10% 5% 2% 5% 68% 10%',
     });
 
     $("#cardsMenu").ready(() => {
         $("#cardsMenu").append(`<div id="addCards"><p id="addCardsP">Add Cards</p></div>`);
+        $("#cardsMenu").append(`<div id="logout"><p id="logoutP">Log Out</p></div>`);
         $("#addCards").css({
             'background-color': 'white',
-            // 'margin': 'auto',
             'text-align': 'center',
             'grid-column': '2',
             'grid-row': '2',
@@ -80,26 +80,60 @@ function setup() {
             'margin': 'auto'
         });
 
+        $("#logout").css({
+            'background-color': 'rgb(87, 128, 87)',
+            'color': 'white',
+            'text-align': 'center',
+            'grid-column': '2',
+            'grid-row': '4',
+            'border-radius': '25px',
+            'display': 'grid',
+            'grid-template-rows': '20% 60% 20%'
+        });
+        $("#logoutP").css({
+            'grid-row': '2',
+            'margin': 'auto'
+        });
+
+        $("#logout").click(() => {
+            $.ajax({
+                type: "get",
+                url: "/logout",
+                success: function (response) {
+                }
+            });
+        });
+
         $("#addCards").click(() => {
             $.ajax({
                 type: "get",
-                url: "/addCard",
+                url: "/addCardButton",
                 success: function (response) {
-                    console.log(response);
+                    $(location).attr("href", "/addCard");
                 }
             });
         });
     });
 
+    $("#opt3").click(() => {
+        $.ajax({
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                $(location).attr("href", "/userProfile");
+            }
+        });
+    });
+
     $("#opt1").click(() => {
         $.ajax({
-            type: "get",
-            url: "/userProfile",
-            success: function(response) {
-
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                $(location).attr("href", "/userProfile");
             }
-        })
-    })
+        });
+    });
 
     populateLandingPage();
 }

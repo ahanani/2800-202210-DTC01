@@ -18,23 +18,23 @@ function populateRows(data) {
 
     for (i = 0; i < data.length; i++) {
         console.log(data[i].Purchaseid)
-        // cardName = $(".Accounttype").html(data[i].Accounttype)
-        // transDate = $(".Transactiondate").html(data[i].Transactiondate)
-        // store = $(".Description1").html(data[i].Description1)
-        // cad = $(".Cad").html(data[i].Cad)
-
         cardName = data[i].Accounttype
         transDate = data[i].Transactiondate.slice(0, 10)
         store = data[i].Description1.slice(0, 20)
         cad = data[i].Cad
 
-        result += `<td> ${cardName} </td>`
-        result += `<td> ${transDate} </td>`
-        result += `<td> ${store} </td>`
-        result += `<td> ${cad} </td>`
-        result += "</tr>"
+        result += `<div id="div${i}"><p>${cardName} </p>`
+        result += `<p> ${transDate} </p>`
+        result += `<p> ${store} </p>`
+        result += `<p> ${cad} </p>`
+        result += "</div>"
 
         sum += data[i].Cad
+
+        $(`#div${i}`).css({
+            'display': 'grid',
+            'grid-template-columns': '20% 20% 40% 20%'
+        });
     }
 
     result += "</table>"
@@ -58,7 +58,7 @@ function populateRows(data) {
 async function getTransactions() {
     await $.ajax({
         type: "GET",
-        url: "http://localhost:3000/expenses/data",
+        url: "/expenses/data",
         success: populateRows
     })
 
