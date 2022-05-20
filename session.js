@@ -274,7 +274,7 @@ app.get('/registeraccount/:username',(req, res) => {
             password: userDetails[req.params.username][2]
         });
 
-        res.send('user validated');
+        res.redirect("/");
     }
 });
 
