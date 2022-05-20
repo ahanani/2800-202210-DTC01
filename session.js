@@ -16,11 +16,14 @@ app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 3000;
 
 const connection = mysql.createConnection({
-    host: "127.0.0.1",
-    user: "root",
-    password: "password",
+    host:"us-cdbr-east-05.cleardb.net",
+    user:"b58f9cb389635c",
+    password:"e429fc2a",
+    database:"heroku_7255b02c2ab7559",
     multipleStatements: true
 });
+
+//CLEARDB_DATABASE_URL: mysql://b58f9cb389635c:e429fc2a@us-cdbr-east-05.cleardb.net/heroku_7255b02c2ab7559?reconnect=true
 
 app.use(express.static("html"));
 app.use(express.static("css"));
