@@ -9,6 +9,9 @@ app.use(express.static('css'));
 app.use(express.static('resource'));
 app.use(express.static('html'));
 
+
+
+
 let connection = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
