@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=VT323&display=swap');
+
+@keyframes XMotion {
+    from {
+        transform: translateX(-100px);
+        opacity: 0%;
+    }
+
+    to {
+        transform: translateX(0px);
+        opacity: 100%;
+    }
+}
+
+@keyframes YMotion {
+    from {
+        transform: translateY(100px);
+        opacity: 0%;
+    }
+
+    to {
+        transform: translateY(0px);
+        opacity: 100%;
+    }
+}
+
+html,
+body {
+    padding: 0%;
+    margin: auto;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+img {
+    width: 50px;
+}
+
+#bottomBar {
+    overflow: hidden;
+    position: fixed;
+    bottom: 0%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-rows: 100%;
+    animation: YMotion 1s;
+}
+
+#emptyDiv {
+    grid-row: 1;
+    grid-column: 1 / span 5;
+    background-color: rgb(224, 224, 224);
+    z-index: -1;
+}
+
+#opt1 {
+    grid-column: 1;
+    grid-row: 1;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+}
+
+#opt2 {
+    grid-column: 2;
+    grid-row: 1;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+}
+
+#opt3 {
+    grid-column: 4;
+    grid-row: 1;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+}
+
+#opt4 {
+    grid-column: 5;
+    grid-row: 1;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
+}
+
+#logo {
+    grid-column: 3;
+    grid-row: 1;
+    margin: auto;
+}
+
+.material-icons {
+    margin: auto;
+}
+
+#link1,
+#link2,
+#link3,
+#link4 {
+    margin: auto;
+    font-size: 0.7em;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 5% 90% 5%;
+    grid-template-rows: 15% 75%;
+    height: 100vh;
+    animation: XMotion 2s;
+}
+
+h1 {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#recentTransaction {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 100%;
+    /* grid-template-rows: 10% 90%; */
+}
+
+
+#dailyDeals {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 10% 90%;
+}
+
+#brands {
+    height: min-content;
+}
+
+/* h2 {
+    grid-row: 1;
+    margin-top: auto;
+    margin-bottom: auto;
+} */
+
+#nikeItem1, #nikeItem2, #nikeItem3, #nikeItem4, #adidasItem1, #adidasItem2, #adidasItem3, #adidasItem4{
+    background-color: rgb(224, 224, 224);
+    padding: 4% 7% 4% 7%;
+    border-radius: 25px;
+    margin-top: 3%;
+}
+
+
+@media screen and (min-width: 551px) {
+    #brands {
+        display: grid;
+        grid-template-columns: 25% 25% 25% 25%;
+        grid-template-rows: 10% 40% 10% 40%;
+    }
+
+    #nike {
+        grid-column: 1 / span 4;
+        grid-row: 1;
+    }
+
+    #nikeItem1 {
+        grid-column: 1;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #nikeItem2 {
+        grid-column: 2;
+        grid-row: 2;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #nikeItem3 {
+        grid-column: 3;
+        grid-row: 2;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #nikeItem4 {
+        grid-column: 4;
+        grid-row: 2;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #adidas {
+        grid-column: 1 / span 4;
+        grid-row: 3;
+    }
+
+    #adidasItem1 {
+        grid-column: 1;
+        grid-row: 4;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #adidasItem2 {
+        grid-column: 2;
+        grid-row: 4;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #adidasItem3 {
+        grid-column: 3;
+        grid-row: 4;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+
+    #adidasItem4 {
+        grid-column: 4;
+        grid-row: 4;
+        height: 100px;
+        width: 100px;
+        margin: auto;
+    }
+    
+}

@@ -3,6 +3,7 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql");
+const db = require("./csvparser/db");
 
 app.use(express.static('javascript'));
 app.use(express.static('css'));
@@ -46,4 +47,57 @@ app.listen(process.env.PORT || 3000, function (err) {
     } else {
         console.log("Listening to port 3000!");
     }
+})
+
+app.get("/expenses/", function (req, res) {
+    res.sendFile(__dirname + '/html/expenses.html');
+})
+
+app.get("/expenses/data", function (req, res) {
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "0000",
+        database: "dtc01"
+    });
+
+    con.connect(function (err) {
+        if (err) throw err;
+        con.query("SELECT * FROM csvlog ORDER BY Purchaseid DESC", function (err, result, fields) {
+            if (err) throw err;
+            console.log(result[0].Purchaseid);
+            res.send(result)
+        });
+    });
+    // res.sendFile(__dirname + '/html/expenses.html');
+
+})
+
+app.get("/insight", function (req, res) {
+    res.sendFile(__dirname + '/html/insight.html');
+    });
+
+
+app.get("/insight/data", function (req, res) {
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "0000",
+        database: "dtc01"
+    });
+
+    con.connect(function (err) {
+        if (err) throw err;
+        con.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function (err, result, fields) {
+            if (err) throw err;
+            console.log(result[0]["SUM(Cad)"]);
+            res.send(result)
+        });
+    });
+    // res.sendFile(__dirname + '/html/expenses.html');
+
 })
