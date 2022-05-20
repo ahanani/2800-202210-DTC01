@@ -2,8 +2,8 @@ const mysql = require('mysql2');
 
 var connection = mysql.createConnection({
     host: "localhost",
-    user: "amin5",
-    password: "MySql1000$",
+    user: "root",
+    password: "0000",
     multipleStatements: true
 });
 
@@ -18,11 +18,24 @@ function closeConnection() {
     connection.close();
 }
 
-function formatDate(unformattedDate) {
-    let date = new Date(unformattedDate);
-    let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
-    return formattedDate;
+// function formatDate(unformattedDate) {
+//     let date = new Date(unformattedDate);
+//     let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+//     return formattedDate;
+// }
+
+function formatDate(unformattedDate){
+    let d = unformattedDate.split('/');
+    let year = d[2];
+    let month = (d[0].length == 1) ? '0' + d[0]: d[0];
+    let day = (d[1].length == 1) ? '0' + d[1]: d[1];
+    let condition = new Date(`${year}-${month}-${day}`);
+    if(condition == 'Invalid Date'){
+        throw "Invalid Date";
+    }
+    return `${year}-${month}-${day}`;
 }
+
 
 function cleanString(str) {
     if (str == undefined) {
