@@ -14,10 +14,10 @@ app.use(express.static('html'));
 
 
 let connection = mysql.createConnection({
-    host:"us-cdbr-east-05.cleardb.net",
-    user:"b4340ddf7668cd",
-    password:"2f4f0497",
-    database:"heroku_efc2db8e4f0d9a8",
+    host: "us-cdbr-east-05.cleardb.net",
+    user: "b4340ddf7668cd",
+    password: "2f4f0497",
+    database: "heroku_efc2db8e4f0d9a8",
     multipleStatements: true
 });
 
@@ -30,7 +30,7 @@ app.get("/users", function (req, res) {
     let userPassword = req.query.password;
 
     connection.connect(function (err) {
-        connection.query(`SELECT * FROM users`, function(err, result) {
+        connection.query(`SELECT * FROM users`, function (err, result) {
             let value = Object.values(JSON.parse(JSON.stringify(result)));
             value.forEach(user => {
                 if (userId === user.name && userPassword === user.password) {
@@ -78,4 +78,25 @@ app.get("/expenses/data", function (req, res) {
 
 app.get("/insight", function (req, res) {
     res.sendFile(__dirname + '/html/insight.html');
+});
+
+
+app.get("/insight/data", function (req, res) {
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "0000",
+        database: "dtc01"
     });
+
+    con.connect(function (err) {
+        if (err) throw err;
+        con.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4", function (err, result, fields) {
+            if (err) throw err;
+            console.log(result[0]["SUM(Cad)"]);
+            res.send(result)
+        });
+    });
+})
