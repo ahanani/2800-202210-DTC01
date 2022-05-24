@@ -2,6 +2,7 @@ function edit() {
     $("#cancel").val("Cancel");
     $("#firstName").attr("disabled", false);
     $("#lastName").attr("disabled", false);
+    $("#password").attr("disabled", false);
 }
 
 function editDataBase() {
@@ -11,6 +12,7 @@ function editDataBase() {
         data: {
             firstName: `${$("#firstName").val()}`,
             lastName: `${$("#lastName").val()}`,
+            password: `${$("#password").val()}`
         },
         dataType: "json",
         success: function(response) {
@@ -24,7 +26,7 @@ function setup() {
     $.ajax({
         type: "get",
         url: "/userProfileDetails",
-        success: function (response) {
+        success: function(response) {
             $("#firstName").val(response[0].firstname).attr("disabled", true);
             $("#lastName").val(response[0].lastname).attr("disabled", true);
             $("#email").val(response[0].username).attr("disabled", true);

@@ -1,29 +1,17 @@
 const express = require('express');
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
-const app = express();
-const mysql = require("mysql")
-const sessiondb = require('./session-db');
+const mysql = require("mysql2")
+const db = require('./db');
 const email = require('./session/email');
 const insertcsv = require('./javascript/insertcsv');
-const {
-    stat
-} = require('fs');
-const {
-    request
-} = require('http');
+const app = express();
+//const {stat} = require('fs');
+const fs = require('fs');
+//const {request} = require('http');
+const http = require('http');
 app.set('view engine', 'ejs');
-const PORT = process.env.PORT || 3000;
-
-const connection = mysql.createConnection({
-    host:"us-cdbr-east-05.cleardb.net",
-    user:"b58f9cb389635c",
-    password:"e429fc2a",
-    database:"heroku_7255b02c2ab7559",
-    multipleStatements: true
-});
-
-//CLEARDB_DATABASE_URL: mysql://b58f9cb389635c:e429fc2a@us-cdbr-east-05.cleardb.net/heroku_7255b02c2ab7559?reconnect=true
+const PORT = process.env.PORT || 5000;
 
 app.use(express.static("html"));
 app.use(express.static("css"));
@@ -31,11 +19,8 @@ app.use(express.static("javascript"));
 app.use(express.static("resource"));
 app.use(express.static("session"));
 app.use(express.json());
-app.use(express.urlencoded({
-    extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 app.use(cookieParser("thisismysecrctekeyfhrgfgrfrty84fwir767"))
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
@@ -44,13 +29,13 @@ app.use(sessions({
 }));
 
 
-var users = []
+let users = [];
 
-function userVal(username, userDetails) {
+function storeUserDetailsTemp(username, userDetails) {
     const obj = {};
     obj[username] = userDetails;
     users.push(obj);
-    setTimeout(function () {
+    setTimeout(function() {
         for (let i = 0; i < users.length; ++i) {
             if (users[i][username]) {
                 users[i] = undefined;
@@ -106,25 +91,23 @@ function parseResultSet(resultset) {
     return parsedResult;
 }
 
-function insertUser(userData) {
+// function insertUser(userData) {
+//     connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function(err, result) {
+//         if (err) console.log(err);
+//         let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+//         if (duplicate) {
+//             throw "Duplicate username";
+//         }
+//     });
 
+//     const queryStatement = `CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; INSERT INTO user VALUES("${userData.username}", 
+//     "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
 
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function (err, result) {
-        if (err) console.log(err);
-        let duplicate = duplicateUserName(userData.username, parseResultSet(result));
-        if (duplicate) {
-            throw "Duplicate username";
-        }
-    });
-
-    const queryStatement = `CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; INSERT INTO user VALUES("${userData.username}", 
-    "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
-
-    connection.query(queryStatement, function (err, result) {
-        if (err) console.log(err);
-        console.log(result);
-    });
-}
+//     connection.query(queryStatement, function(err, result) {
+//         if (err) console.log(err);
+//         console.log(result);
+//     });
+// }
 
 var createUserTable = `CREATE TABLE IF NOT EXISTS user(
     username varchar(50) NOT NULL,
@@ -161,7 +144,7 @@ app.get("/signUpPage", (req, res) => {
     res.sendFile(`${__dirname}/html/signup.html`);
 });
 
-app.get("/landingPage/:user", userAuthentication,(req, res) => {
+app.get("/landingPage/:user", userAuthentication, (req, res) => {
     console.log(`Sent landing page html to ${req.params.user}`);
     res.render(__dirname + "/views/landingPage.ejs", {
         user: `${req.params.user}`
@@ -232,8 +215,8 @@ app.post("/userProfileButton", userAuthentication, (req, res) => {
     res.status(200).send();
 });
 
-app.get("/userProfile", userAuthentication, (req, res) => {
-    res.sendFile(__dirname+ "/html/profilePage.html");
+app.get("/userProfile", (req, res) => {
+    res.sendFile(__dirname + "/html/profilePage.html");
 });
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
@@ -245,7 +228,7 @@ app.get("/userProfileDetails", userAuthentication, (req, res) => {
     });
 });
 
-app.post("/editDataBase", userAuthentication,(req, res) => {
+app.post("/editDataBase", userAuthentication, (req, res) => {
     connection.query(`USE dtc01; UPDATE user SET firstname = '${req.body.firstName}', lastname = '${req.body.lastName}' WHERE username LIKE '%${req.session.user}%'`, (err, result) => {
         if (err) {
             console.log(err);
@@ -261,7 +244,8 @@ app.post('/makeaccount', (req, res) => {
         res.send('form not completed');
     }
 
-    userVal(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
+
+    storeUserDetailsTemp(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
     const emailBody = `/registeraccount/${req.body.username}`;
 
 
@@ -288,24 +272,24 @@ app.get('/registeraccount/:username', (req, res) => {
     }
 });
 
-app.get("/insight", userAuthentication, function (req, res) {
+app.get("/insight", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/insight.html');
 });
 
-app.get("/insight/data", function (req, res) {
-    connection.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function (err, result, fields) {
+app.get("/insight/data", function(req, res) {
+    connection.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
         if (err) throw err;
         console.log(result[0]["SUM(Cad)"]);
         res.send(result)
     });
 })
 
-app.get("/expenses", userAuthentication, function (req, res) {
+app.get("/expenses", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/expenses.html');
 })
 
-app.get("/expenses/data", userAuthentication, function (req, res) {
-    connection.query("SELECT * FROM Csvlog ORDER BY Purchaseid DESC", function (err, result, fields) {
+app.get("/expenses/data", userAuthentication, function(req, res) {
+    connection.query("SELECT * FROM Csvlog ORDER BY Purchaseid DESC", function(err, result, fields) {
         if (err) throw err;
         console.log(result[0].Purchaseid);
         res.send(result);
