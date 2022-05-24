@@ -1,31 +1,182 @@
-const xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = () => {
-    if(xhttp.status == 200 && xhttp.readyState == 4) {
-        // Received csv file
-        let csv_data = xhttp.responseText;
-        
-        csv_data = csv_data.split("\n");
-        csv_data = csv_data.map(line => line.split(",")).slice(1);
-        let obj = {};
-        for(let i = 0; i < csv_data.length; i++) {
-            if(csv_data[i][0]) {
-                if(csv_data[i][0] in obj) {
-                    obj[csv_data[i][0]] +=  Math.abs((csv_data[i][3]));
-                } else obj[csv_data[i][0]] =  Math.abs((csv_data[i][3]));
-            }
-        }
+google.charts.load('current', {
+    'packages': ['corechart']
+});
 
-        let conv_arr = Object.keys(obj).map(m => [m, obj[m]]);
-        drawChart(conv_arr);
+function setup() {
+    var open = false;
+
+    function drawChart(arr) {
+        var data_info = [
+            ['ContrCy', 'Car'],
+            ...arr
+        ];
+
+        let sum = 0;
+        for (let i = 0; i < arr.length; i++) sum += arr[i][1];
+
+        sum = Math.round(sum * 100) / 100;
+
+        document.getElementById("price").innerHTML = "$" + sum;
+
+        var data = google.visualization.arrayToDataTable(
+            data_info
+        );
+
+        var options = {
+            title: 'Current Month',
+            is3D: true
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+        chart.draw(data, options);
     }
+
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = () => {
+        if (xhttp.status == 200 && xhttp.readyState == 4) {
+            // Received csv file
+            let csv_data = JSON.parse(xhttp.responseText);
+            let obj = {};
+
+            for (let i = 0; i < csv_data.length; i++) {
+                if (csv_data[i].Accounttype) {
+                    if (csv_data[i].Accounttype in obj) {
+                        obj[csv_data[i].Accounttype] += Math.abs((csv_data[i].Cad));
+                    } else obj[csv_data[i].Accounttype] = Math.abs((csv_data[i].Cad));
+                }
+            }
+
+            let conv_arr = Object.keys(obj).map(m => [m, obj[m]]);
+            drawChart(conv_arr);
+        }
+    }
+
+    google.charts.setOnLoadCallback(() => {
+        xhttp.open("GET", "/chartData");
+        xhttp.send();
+    });
+
+    $("body").append(`<div id="cardsMenu"></div>`);
+    $("#cardsMenu").css({
+        'height': '0%',
+        'width': '100%',
+        'background-color': 'rgb(224, 224, 224)',
+        'z-index': '2',
+        'position': 'fixed',
+        'overflow': 'hidden',
+        'grid-column': '1 / span 3',
+        'grid-row': '1 / span 4',
+        'display': 'grid',
+        'grid-template-columns': '30% 40% 30%',
+        'grid-template-rows': '10% 5% 2% 5% 68% 10%',
+    });
+
+    $("#cardsMenu").ready(() => {
+        $("#cardsMenu").append(`<div id="addCards"><p id="addCardsP">Add Cards</p></div>`);
+        $("#cardsMenu").append(`<div id="logout"><p id="logoutP">Log Out</p></div>`);
+        $("#addCards").css({
+            'background-color': 'white',
+            'text-align': 'center',
+            'grid-column': '2',
+            'grid-row': '2',
+            'border-radius': '25px',
+            'display': 'grid',
+            'grid-template-rows': '20% 60% 20%'
+        });
+        $("#addCardsP").css({
+            'grid-row': '2',
+            'margin': 'auto'
+        });
+
+        $("#logout").css({
+            'background-color': 'rgb(87, 128, 87)',
+            'color': 'white',
+            'text-align': 'center',
+            'grid-column': '2',
+            'grid-row': '4',
+            'border-radius': '25px',
+            'display': 'grid',
+            'grid-template-rows': '20% 60% 20%'
+        });
+        $("#logoutP").css({
+            'grid-row': '2',
+            'margin': 'auto'
+        });
+
+        $("#logout").click(() => {
+            $.ajax({
+                type: "get",
+                url: "/logout",
+                success: function (response) {
+                    $(location).attr("href", "/");
+                }
+            });
+        });
+
+        $("#addCards").click(() => {
+            $.ajax({
+                type: "get",
+                url: "/addCardButton",
+                success: function (response) {
+                    $(location).attr("href", "/addCard");
+                }
+            });
+        });
+    });
+
+    $("#opt3").click(() => {
+        $.ajax({
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                $(location).attr("href", "/chart");
+            }
+        });
+    });
+
+    $("#opt1").click(() => {
+        $.ajax({
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                console.log(response)
+                $(location).attr("href", "/userProfile");
+            }
+        });
+    });
+
+    $("#logo").click(() => {
+        if (open) {
+            open = false;
+            $("#cardsMenu").animate({
+                height: '0%'
+            }, 500);
+            $("#addCards").animate({
+                height: '0%'
+            }, 400);
+            $("#addCardsP").hide();
+        } else {
+            open = true;
+            $("#addCardsP").show();
+            $("#cardsMenu").animate({
+                height: '100%'
+            }, 500);
+            $("#addCards").animate({
+                height: '100%'
+            }, 600);
+        }
+    });
+
+    $("#opt4").click(() => {
+        $.ajax({
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                console.log(response)
+                $(location).attr("href", "/expenses");
+            }
+        }); 
+    })
 }
 
-google.charts.setOnLoadCallback(() => {
-    xhttp.open("GET", "Jesp.csv");
-    xhttp.send();
-
-    setInterval(() => {
-        xhttp.open("GET", "Jesp.csv");
-        xhttp.send();
-    }, 2000);
-})
+$(document).ready(setup);

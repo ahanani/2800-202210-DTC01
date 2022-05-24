@@ -4,52 +4,17 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="/report.css">
+	<link rel="stylesheet" href="/chart.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<title>Current month</title>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body>
 	<div id="myChart" style="width:100%; max-width:600px; height:500px;">
 	</div>
-
-	<script>
-		google.charts.load('current', {
-			'packages': ['corechart']
-		});
-		// google.charts.setOnLoadCallback(drawChart);
-
-		function drawChart(arr) {
-			var data_info = [
-				['ContrCy', 'Car'],
-				// ['Visa', 430],
-				// ['AMX', 620],
-				// This is where you'd put that CSV data
-				...arr
-			];
-
-			let sum = 0;
-			for (let i = 0; i < arr.length; i++) sum += arr[i][1];
-
-			sum = Math.round(sum * 100) / 100;
-
-			document.getElementById("price").innerHTML = "$" + sum;
-
-			var data = google.visualization.arrayToDataTable(
-				data_info
-			);
-
-			var options = {
-				title: 'Current Month',
-				is3D: true
-			};
-
-			var chart = new google.visualization.PieChart(document.getElementById('myChart'));
-			chart.draw(data, options);
-		}
-	</script>
 	<h2>Total spending: <span id="price">$</span></h2>
 
 
@@ -57,25 +22,25 @@
 
 	<!-- //bottom bar from here -->
 	<div id="bottomBar">
-		<div id="emptyDiv"></div>
-		<div id="opt1">
-			<i class="material-icons">person</i>
-			<p id="link1">Profile</p>
-		</div>
-		<div id="opt2">
-			<i class="material-icons">bookmark</i>
-			<p id="link2">Bookmark</p>
-		</div>
-		<div id="opt3">
-			<i class="material-icons"><a href="./report.html">bar_chart</i></a>
-			<p id="link3">Report</p>
-		</div>
-		<div id="opt4">
-			<i class="material-icons">money</i>
-			<p id="link4">Expenses</p>
-		</div>
-		<a href="/profilePage.html" id="logo"><img src="/Dollar-Track.png" alt="DollarTrack"></a>
-	</div>
+        <div id="emptyDiv"></div>
+        <div id="opt1">
+            <i class="material-icons">person</i>
+            <p id="link1">Profile</p>
+        </div>
+        <div id="opt2">
+            <i class="material-icons">bookmark</i>
+            <p id="link2">Bookmark</p>
+        </div>
+        <div id="opt3">
+            <i class="material-icons">bar_chart</i>
+            <p id="link3">Report</p>
+        </div>
+        <div id="opt4">
+            <i class="material-icons">money</i>
+            <p id="link4">Expenses</p>
+        </div>
+        <img id="logo" src="/Dollar-Track.png" alt="DollarTrack">
+    </div>
 	<script src="chart.js"></script>
 </body>
 

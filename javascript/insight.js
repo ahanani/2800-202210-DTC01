@@ -5,17 +5,14 @@ function populateRows(data) {
     var weeklySum2 = 0
     var future4Weeks = []
 
-    data.reverse() // now data is in right order as past -> recent.
+    data.reverse()
     console.log(data)
     dataFor4WeeksGraph = data
     for (i = 0; i < dataFor4WeeksGraph.length; i++) {
         weeklySum += Math.abs(dataFor4WeeksGraph[i]["SUM(Cad)"])
-        // console.log(weeklySum)
-
-        past4Weeks.push(weeklySum) //right order
+        past4Weeks.push(weeklySum)
     }
 
-    //data: right order
     for (i = 2; i < 4; i++) {
         weeklySum2 += Math.abs(data[i]["SUM(Cad)"])
         console.log(weeklySum2)
@@ -24,8 +21,6 @@ function populateRows(data) {
     }
     console.log(past4Weeks)
     console.log(recent2Weeks)
-    // console.log(data)
-    // $(".transactionRecord").html(JSON.stringify(data))
 
     recentSlope = Math.abs(recent2Weeks[1]) - Math.abs(recent2Weeks[0])
     pastSlope = Math.abs(past4Weeks[1]) - Math.abs(past4Weeks[0])
@@ -82,7 +77,7 @@ function populateRows(data) {
         )
     } else {
         $("#insightReport").html(
-            `Your saving now! you are expected to spend $${expectation} by end of next 2 weeks`
+            `You are saving now! you are expected to spend $${expectation} by end of next 2 weeks`
         )
     }
 }
@@ -93,7 +88,7 @@ async function getTransactions() {
         type: "GET",
         url: "/insight/data",
         success: populateRows
-    })
+    });
 
 }
 

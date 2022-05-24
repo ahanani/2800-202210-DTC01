@@ -16,16 +16,6 @@ function populateLandingPage() {
 function setup() {
     var open = false;
 
-    $("#opt3").click(() => {
-        $.ajax({
-            type: "get",
-            url: "/report",
-            success: function (response) {
-                console.log(response);
-            }
-        });
-    })
-
     $("#logo").click(() => {
         if (open) {
             open = false;
@@ -100,6 +90,7 @@ function setup() {
                 type: "get",
                 url: "/logout",
                 success: function (response) {
+                    $(location).attr("href", "/");
                 }
             });
         });
@@ -120,7 +111,7 @@ function setup() {
             type: "post",
             url: "/userProfileButton",
             success: function (response) {
-                $(location).attr("href", "/userProfile");
+                $(location).attr("href", "/chart");
             }
         });
     });
@@ -130,10 +121,22 @@ function setup() {
             type: "post",
             url: "/userProfileButton",
             success: function (response) {
+                console.log(response)
                 $(location).attr("href", "/userProfile");
             }
         });
     });
+
+    $("#opt4").click(() => {
+        $.ajax({
+            type: "post",
+            url: "/userProfileButton",
+            success: function (response) {
+                console.log(response)
+                $(location).attr("href", "/expenses");
+            }
+        }); 
+    })
 
     populateLandingPage();
 }

@@ -13,12 +13,11 @@ app.use(express.static('html'));
 
 
 
-let connection = mysql.createConnection({
-    host: "us-cdbr-east-05.cleardb.net",
-    user: "b4340ddf7668cd",
-    password: "2f4f0497",
-    database: "heroku_efc2db8e4f0d9a8",
-    multipleStatements: true
+const con = mysql.createConnection({
+    host: "127.0.0.1",
+    user: "root",
+    password: "password",
+    database: "dtc01"
 });
 
 app.get("/", function (req, res) {
@@ -55,22 +54,10 @@ app.get("/expenses/", function (req, res) {
 })
 
 app.get("/expenses/data", function (req, res) {
-    var mysql = require('mysql');
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "0000",
-        database: "dtc01"
-    });
-
-    con.connect(function (err) {
+    con.query("SELECT * FROM csvlog ORDER BY Purchaseid DESC", function (err, result, fields) {
         if (err) throw err;
-        con.query("SELECT * FROM csvlog ORDER BY Purchaseid DESC", function (err, result, fields) {
-            if (err) throw err;
-            console.log(result[0].Purchaseid);
-            res.send(result)
-        });
+        console.log(result[0].Purchaseid);
+        res.send(result)
     });
     // res.sendFile(__dirname + '/html/expenses.html');
 
@@ -82,35 +69,20 @@ app.get("/insight", function (req, res) {
 
 
 app.get("/insight/data", function (req, res) {
-    var mysql = require('mysql');
-
-    var con = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "0000",
-        database: "dtc01"
-    });
-
-    con.connect(function (err) {
+    con.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4", function (err, result, fields) {
         if (err) throw err;
-        con.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4", function (err, result, fields) {
-            if (err) throw err;
-            console.log(result[0]["SUM(Cad)"]);
-            res.send(result)
-        });
+        console.log(result[0]["SUM(Cad)"]);
+        res.send(result)
     });
-<<<<<<< HEAD
+
     // res.sendFile(__dirname + '/html/expenses.html');
 
 })
 
-app.get("/report", function(req,res){
+app.get("/report", function (req, res) {
     res.sendFile(__dirname + '/html/report.html');
 });
 
-app.get("/chart", function(req,res){
+app.get("/chart", function (req, res) {
     res.sendFile(__dirname + '/html/chart.html');
 });
-=======
-})
->>>>>>> e2d127507e28a4695be2b954d2c53d169f0e9477
