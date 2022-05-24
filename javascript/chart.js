@@ -23,8 +23,8 @@ xhttp.onreadystatechange = () => {
         for(let i = 0; i < csv_data.length; i++) {
             if(csv_data[i][0]) {
                 if(csv_data[i][0] in obj) {
-                    obj[csv_data[i][0]] += Number(csv_data[i][3]);
-                } else obj[csv_data[i][0]] = Number(csv_data[i][3]);
+                    obj[csv_data[i][0]] +=  Math.abs((csv_data[i][3]));
+                } else obj[csv_data[i][0]] =  Math.abs((csv_data[i][3]));
             }
         }
 

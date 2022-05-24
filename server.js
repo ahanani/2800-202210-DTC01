@@ -101,3 +101,11 @@ app.get("/insight/data", function (req, res) {
     // res.sendFile(__dirname + '/html/expenses.html');
 
 })
+
+app.get("/report", function(req,res){
+    res.sendFile(__dirname + '/html/report.html');
+});
+
+app.get("/chart", function(req,res){
+    res.sendFile(__dirname + '/html/chart.html');
+});
