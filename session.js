@@ -11,7 +11,21 @@ const fs = require('fs');
 //const {request} = require('http');
 const http = require('http');
 app.set('view engine', 'ejs');
+<<<<<<< HEAD
 const PORT = process.env.PORT || 5000;
+=======
+const PORT = process.env.PORT || 3000;
+
+const connection = mysql.createConnection({
+    host:"127.0.0.1",
+    user:"root",
+    password:"password",
+    // database:"heroku_7255b02c2ab7559",
+    multipleStatements: true
+});
+
+//CLEARDB_DATABASE_URL: mysql://b58f9cb389635c:e429fc2a@us-cdbr-east-05.cleardb.net/heroku_7255b02c2ab7559?reconnect=true
+>>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
 
 app.use(express.static("html"));
 app.use(express.static("css"));
@@ -21,7 +35,11 @@ app.use(express.static("session"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+<<<<<<< HEAD
 app.use(cookieParser("thisismysecrctekeyfhrgfgrfrty84fwir767"))
+=======
+
+>>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized: true,
@@ -211,6 +229,17 @@ app.get("/userDetails/:date", userAuthentication, (req, res) => {
 
 });
 
+app.get("/chartData", userAuthentication, (req, res) => {
+    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCsvLog}; 
+    SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.user}%"`, (err, result) => {
+        if (err) {
+            console.log(err);
+        }
+        res.send(result[3]);
+    })
+
+});
+
 app.post("/userProfileButton", userAuthentication, (req, res) => {
     res.status(200).send();
 });
@@ -276,13 +305,18 @@ app.get("/insight", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/insight.html');
 });
 
+<<<<<<< HEAD
 app.get("/insight/data", function(req, res) {
     connection.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
+=======
+app.get("/insight/data", function (req, res) {
+    connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function (err, result, fields) {
+>>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
         if (err) throw err;
         console.log(result[0]["SUM(Cad)"]);
         res.send(result)
     });
-})
+});
 
 app.get("/expenses", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/expenses.html');
@@ -295,6 +329,14 @@ app.get("/expenses/data", userAuthentication, function(req, res) {
         res.send(result);
     });
 })
+
+app.get("/report", userAuthentication,function(req,res){
+    res.sendFile(__dirname + '/html/report.html');
+});
+
+app.get("/chart", userAuthentication,function(req,res){
+    res.sendFile(__dirname + '/html/chart.html');
+});
 
 // app.get('/adminlogin', function (req, res) {
 //     res.sendFile('views/admin-login.html', {
