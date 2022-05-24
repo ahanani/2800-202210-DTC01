@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/report.css">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<title>Current month</title>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/report.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<title>Current month</title>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
 
 <body>
 	<div id="myChart" style="width:100%; max-width:600px; height:500px;">
 	</div>
 
 	<script>
-		google.charts.load('current', { 'packages': ['corechart'] });
+		google.charts.load('current', {
+			'packages': ['corechart']
+		});
 		// google.charts.setOnLoadCallback(drawChart);
 
 		function drawChart(arr) {
 			var data_info = [
-                ['ContrCy', 'Car'],
-                // ['Visa', 430],
-                // ['AMX', 620],
+				['ContrCy', 'Car'],
+				// ['Visa', 430],
+				// ['AMX', 620],
 				// This is where you'd put that CSV data
 				...arr
-            ];
+			];
 
 			let sum = 0;
-			for(let i = 0; i < arr.length; i++) sum += arr[i][1];
+			for (let i = 0; i < arr.length; i++) sum += arr[i][1];
 
 			sum = Math.round(sum * 100) / 100;
 
 			document.getElementById("price").innerHTML = "$" + sum;
 
 			var data = google.visualization.arrayToDataTable(
-				data_info 
+				data_info
 			);
 
 			var options = {

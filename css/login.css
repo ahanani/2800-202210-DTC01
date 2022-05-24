@@ -117,11 +117,10 @@ span:hover {
     cursor: pointer;
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-device-width: 428px) {
     body {
         display: grid;
         grid-template-columns: 10% 80% 10%;
         grid-template-rows: 10% 30% 50% 10%;
-        height: 100vh;
     }
 }

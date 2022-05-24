@@ -2,7 +2,8 @@
 <html lang="en">
 
 <head>
-    <title>Your Name - DollarTrack</title>
+    <title>Your Name - Expenses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/Dollar-Track.ico">
     <link rel="stylesheet" href="/expenses.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,27 +14,12 @@
 
 <body>
     <main>
-        <h1>Welcome...</h1>
         <div id="recentTransaction">
             <span id="easter">
-                <h2>Recents</h2>
+                <h2>Expenses</h2>
             </span>
-            <!-- <template id="TourCardTemplate"> -->
-            <!-- <div class="transactionRecord">
-                      <div class="recordBody">
-                        <p class="Accounttype">date placeholder</p>
-                        <p class="Transactiondate">description placeholder</p>
-                        <p class="Description1"></p>
-                        <p class="Cad"></p>                        
-                      </div>
-                    </div> -->
-            <!-- </template> -->
-
-
             <div class="transactionRecord">
             </div>
-
-
         </div>
     </main>
     <div id="bottomBar">
@@ -43,16 +29,20 @@
             <p id="link1">Profile</p>
         </div>
         <div id="opt2">
-            <i class="material-icons">bookmark</i>
-            <p id="link2">Bookmark</p>
+            <a href="./insight.html">
+            <i class="material-icons">insights</i>
+            <p id="link2">insight</p>
+        </a>
         </div>
         <div id="opt3">
-            <i class="material-icons">bar_chart</i>
+            <i class="material-icons"><a href="./report.html">bar_chart</i></a>
             <p id="link3">Report</p>
         </div>
         <div id="opt4">
+            <a href="./expenses.html">
             <i class="material-icons">money</i>
             <p id="link4">Expenses</p>
+        </a>
         </div>
         <a href="/profilePage.html" id="logo"><img src="/Dollar-Track.png" alt="DollarTrack"></a>
     </div>

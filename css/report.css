@@ -148,7 +148,7 @@ h2 {
 }
 
 
-@media screen and (min-width: 551px) {
+@media screen and (max-device-width: 428px) {
     #brands {
         display: grid;
         grid-template-columns: 25% 25% 25% 25%;
