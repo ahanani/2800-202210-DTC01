@@ -40,7 +40,7 @@ function processPurchase(req, res, next) {
             csvParser(newpath, (result) => {
                 const formatted = formatCsvResult(result);
                 fs.unlinkSync(newpath)
-                for (let i = 0; i < formattedResult.length; ++i) {
+                for (let i = 0; i < formatted.length; ++i) {
                     db.insertCsvItem(req.session.username, formatted[i]);
                 }
                 next();
@@ -59,7 +59,7 @@ function processCompany(req, res, next) {
             csvParser(newpath, (result) => {
                 const formatted = formatCsvResult(result);
                 fs.unlinkSync(newpath)
-                for (let i = 1; i < result.length; ++i) {
+                for (let i = 1; i < formatted.length; ++i) {
                     db.insertCompany(formatted[i]);
                 }
                 next();
