@@ -27,10 +27,10 @@ function setup() {
         type: "get",
         url: "/userProfileDetails",
         success: function(response) {
-            $("#firstName").val(response[0].firstname).attr("disabled", true);
-            $("#lastName").val(response[0].lastname).attr("disabled", true);
-            $("#email").val(response[0].username).attr("disabled", true);
-            $("#password").val(response[0].password).attr("disabled", true);
+            $("#firstName").val(response.firstname).attr("disabled", true);
+            $("#lastName").val(response.lastname).attr("disabled", true);
+            $("#email").val(response.username).attr("disabled", true);
+            $("#password").val(response.password).attr("disabled", true);
         }
     });
 

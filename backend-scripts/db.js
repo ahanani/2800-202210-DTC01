@@ -196,12 +196,11 @@ function retrieveCardDetails(req, res) {
 
 
 function retrieveUserDetails(req, res, next) {
-    const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = ${formatStringItem(req.body.username)} AND password = ${formatStringItem(req.body.password)};`
+    const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = ${formatStringItem(req.session.username)};`
     connection.query(getUserDetailsStatement,
         function(err, result) {
             if (err)
                 console.log(err);
-            //res.json(parseResultSet(result));
             next(result[1][0]);
         })
 }

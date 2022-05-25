@@ -153,7 +153,10 @@ app.get("/userProfile", (req, res) => {
 });
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
-    db.retrieveUserDetails(req, res, (data) => { res.json(data) });
+    db.retrieveUserDetails(req, res, (data) => {
+        console.log("***", data, "***");
+        res.json(data)
+    });
 });
 
 app.post("/editDataBase", userAuthentication, (req, res) => {
