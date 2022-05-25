@@ -76,7 +76,7 @@ app.post('/user', (req, res) => {
             req.session.name = userinfo.firstname;
             res.redirect('/landingPage');
         } else {
-            res.status(401).send("Incorrect password or username");
+            res.status(401).sendFile("/html/accessDenied.html", { root: __dirname });
         }
     });
 });
