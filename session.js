@@ -107,7 +107,7 @@ app.post('/uploadfile', userAuthentication, (req, res) => {
             res.redirect("/expenses");
         });
     } else {
-        res.send("files not selected");
+        res.sendFile('/html/fileNotSelected.html', { root: __dirname });
     }
 
 });
@@ -134,7 +134,6 @@ app.get("/userProfile", (req, res) => {
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
     db.retrieveUserDetails(req, res, (data) => {
-        console.log("***", data, "***");
         res.json(data)
     });
 });
