@@ -103,7 +103,7 @@ app.get("/logout", userAuthentication, (req, res) => {
 
 app.post('/uploadfile', userAuthentication, (req, res) => {
     insertcsv.processPurchase(req, res, () => {
-        res.send("uploaded the file");
+        res.redirect("/expenses");
     });
 });
 
