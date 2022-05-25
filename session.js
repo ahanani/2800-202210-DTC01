@@ -102,9 +102,14 @@ app.get("/logout", userAuthentication, (req, res) => {
 
 
 app.post('/uploadfile', userAuthentication, (req, res) => {
-    insertcsv.processPurchase(req, res, () => {
-        res.redirect("/expenses");
-    });
+    if (req.body.fileupload != undefined) {
+        insertcsv.processPurchase(req, res, () => {
+            res.redirect("/expenses");
+        });
+    } else {
+        res.send("files not selected");
+    }
+
 });
 
 app.get("/userDetails/:date", userAuthentication, (req, res) => {
