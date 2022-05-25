@@ -1,31 +1,17 @@
 const express = require('express');
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
-const mysql = require("mysql2")
-const db = require('./db');
-const email = require('./session/email');
-const insertcsv = require('./javascript/insertcsv');
+const db = require('./backend-scripts/db');
+const email = require('./backend-scripts/email');
+const insertcsv = require('./backend-scripts/insertcsv');
 const app = express();
-//const {stat} = require('fs');
 const fs = require('fs');
-//const {request} = require('http');
 const http = require('http');
 app.set('view engine', 'ejs');
-<<<<<<< HEAD
+app.use(express.static('public'))
 const PORT = process.env.PORT || 5000;
-=======
-const PORT = process.env.PORT || 3000;
 
-const connection = mysql.createConnection({
-    host:"127.0.0.1",
-    user:"root",
-    password:"password",
-    // database:"heroku_7255b02c2ab7559",
-    multipleStatements: true
-});
 
-//CLEARDB_DATABASE_URL: mysql://b58f9cb389635c:e429fc2a@us-cdbr-east-05.cleardb.net/heroku_7255b02c2ab7559?reconnect=true
->>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
 
 app.use(express.static("html"));
 app.use(express.static("css"));
@@ -35,11 +21,7 @@ app.use(express.static("session"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-<<<<<<< HEAD
 app.use(cookieParser("thisismysecrctekeyfhrgfgrfrty84fwir767"))
-=======
-
->>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized: true,
@@ -82,60 +64,21 @@ function userAuthentication(req, res, next) {
     }
 }
 
-
-function duplicateUserName(newUserName, parsedResultSet) {
-    for (let i = 0; i < parsedResultSet.length; ++i) {
-        if (parsedResultSet[i][0] == newUserName) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function parseResultSet(resultset) {
-
-    if (resultset == undefined) {
-        return undefined;
-    }
-
-    parsedResult = [];
-
-    for (let i = 0; i < resultset[1].length; ++i) {
-
-        parsedResult.push(Object.values(resultset[1][i]));
-    }
-
-    return parsedResult;
-}
-
-// function insertUser(userData) {
-//     connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01;SELECT username FROM user;`, function(err, result) {
-//         if (err) console.log(err);
-//         let duplicate = duplicateUserName(userData.username, parseResultSet(result));
-//         if (duplicate) {
-//             throw "Duplicate username";
-//         }
-//     });
-
-//     const queryStatement = `CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; INSERT INTO user VALUES("${userData.username}", 
-//     "${userData.firstname}", "${userData.lastname}", "${userData.password}");`;
-
-//     connection.query(queryStatement, function(err, result) {
-//         if (err) console.log(err);
-//         console.log(result);
-//     });
-// }
-
-var createUserTable = `CREATE TABLE IF NOT EXISTS user(
-    username varchar(50) NOT NULL,
-    firstname varchar(20) NOT NULL,
-    lastname varchar(20) NOT NULL,
-    password varchar(20) NOT NULL,
-    PRIMARY KEY(username ))`;
-
 app.get("/", (req, res) => {
     res.sendFile(__dirname + '/html/login.html')
+});
+
+app.post('/user', (req, res) => {
+
+    db.validateUser(req, res, (userinfo) => {
+        if (userinfo != undefined) {
+            req.session.loginStatus = true;
+            req.session.username = req.body.username;
+            res.redirect(`/landingPage/${results[1]}`);
+        } else {
+            res.status(401).send("Incorrect password or username");
+        }
+    });
 });
 
 app.post("/user", (req, res) => {
@@ -162,22 +105,17 @@ app.get("/signUpPage", (req, res) => {
     res.sendFile(`${__dirname}/html/signup.html`);
 });
 
-app.get("/landingPage/:user", userAuthentication, (req, res) => {
-    console.log(`Sent landing page html to ${req.params.user}`);
-    res.render(__dirname + "/views/landingPage.ejs", {
-        user: `${req.params.user}`
-    });
+app.get("/landingPage", userAuthentication, (req, res) => {
+    res.render("landingPage.ejs", { user: req.session.username });
 });
 
 app.get("/addCardButton", userAuthentication, (req, res) => {
-    res.status(200).send();
+    res.status(200).send("added card button");
 });
 
 app.get("/addCard", userAuthentication, (req, res) => {
-    res.render(__dirname + "/views/upload.ejs", {
-        user: `${req.session.name}`
-    });
-    res.send();
+
+    res.render("upload.ejs", { user: req.session.username });
 });
 
 app.get("/logout", userAuthentication, (req, res) => {
@@ -188,56 +126,21 @@ app.get("/logout", userAuthentication, (req, res) => {
 
 
 app.post('/uploadfile', userAuthentication, (req, res) => {
-    insertcsv.insertPurchase(req, res, req.session.user);
+    insertcsv.processPurchase(req, res, () => {
+        res.send("uploaded the file");
+    });
 });
 
-// app.get('/report', userAuthentication, (req, res) => {
-//     console.log("This happens!");
-//     res.render(__dirname + "/views/reports.ejs", {
-//         user: `${req.session.name}`
-//     }, (err, html) => {
-//         if (err) {
-//             console.log(err);
-//         }
-//         res.send(html);
-//     });
-//     res.send();
-// });
-
-let createCsvLog = `CREATE TABLE IF NOT EXISTS Csvlog (
-    Purchaseid int NOT NULL AUTO_INCREMENT,
-    Username VARCHAR(30) NOT NULL,
-    Accounttype VARCHAR(10),
-    Accountnumber VARCHAR(3),
-    Transactiondate DATE NOT NULL,
-    Chequenumber VARCHAR(20),
-    Description1 VARCHAR(100),
-    Description2 VARCHAR(100),
-    Cad DECIMAL(6,2),
-    Usd DECIMAL(6,2),
-    PRIMARY KEY(Purchaseid, Username))`
-
 app.get("/userDetails/:date", userAuthentication, (req, res) => {
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCsvLog}; 
-    SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.user}%" AND 
-    Transactiondate LIKE "%${req.params.date}";`, (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        res.send(result[3]);
-    })
-
+    db.retrievePurchaseDetails(req, res, (data) => {
+        res.json(data);
+    });
 });
 
 app.get("/chartData", userAuthentication, (req, res) => {
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createCsvLog}; 
-    SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.user}%"`, (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        res.send(result[3]);
-    })
-
+    db.retrievePurchaseDetails(req, res, (data) => {
+        res.json(data);
+    });
 });
 
 app.post("/userProfileButton", userAuthentication, (req, res) => {
@@ -249,20 +152,11 @@ app.get("/userProfile", (req, res) => {
 });
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
-    connection.query(`USE dtc01; SELECT * FROM user WHERE username LIKE '%${req.session.user}%'`, (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        res.send(result[1]);
-    });
+    retrieveUserDetails(req, res, (data) => { res.json(data) });
 });
 
 app.post("/editDataBase", userAuthentication, (req, res) => {
-    connection.query(`USE dtc01; UPDATE user SET firstname = '${req.body.firstName}', lastname = '${req.body.lastName}' WHERE username LIKE '%${req.session.user}%'`, (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-    });
+    db.updateUserDetails(req, res, () => res.send("updated user details"));
 });
 
 
@@ -271,33 +165,26 @@ app.post('/makeaccount', (req, res) => {
     if (req.body.username == undefined || req.body.firstname == undefined || req.body.lastname == undefined ||
         req.body.password == undefined) {
         res.send('form not completed');
+    } else {
+        storeUserDetailsTemp(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
+        const emailBody = `/registeraccount/${req.body.username}`;
+        email.sentEmail(req.body.username, 'Dollar Track Email Validation', emailBody);
+        res.send('check your email');
     }
-
-
-    storeUserDetailsTemp(req.body.username, [req.body.firstname, req.body.lastname, req.body.password]);
-    const emailBody = `/registeraccount/${req.body.username}`;
-
-
-    email.sentEmail(req.body.username, 'Dollar Track Email Validation', emailBody);
-    res.send('check your email');
 });
 
 app.get('/registeraccount/:username', (req, res) => {
-
     const userDetails = getUserDetails(req.params.username);
-
     if (!userDetails) {
         res.send('session expired');
 
     } else {
-        insertUser({
+        db.insertUser({
             username: req.params.username,
             firstname: userDetails[req.params.username][0],
             lastname: userDetails[req.params.username][1],
             password: userDetails[req.params.username][2]
-        });
-
-        res.redirect("/");
+        }, () => res.redirect("/"));
     }
 });
 
@@ -305,13 +192,9 @@ app.get("/insight", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/insight.html');
 });
 
-<<<<<<< HEAD
+
 app.get("/insight/data", function(req, res) {
-    connection.query("SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
-=======
-app.get("/insight/data", function (req, res) {
-    connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function (err, result, fields) {
->>>>>>> be7f789a6671e8b4a5654ebbbd9c0a54e60cdd84
+    connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
         if (err) throw err;
         console.log(result[0]["SUM(Cad)"]);
         res.send(result)
@@ -323,18 +206,14 @@ app.get("/expenses", userAuthentication, function(req, res) {
 })
 
 app.get("/expenses/data", userAuthentication, function(req, res) {
-    connection.query("SELECT * FROM Csvlog ORDER BY Purchaseid DESC", function(err, result, fields) {
-        if (err) throw err;
-        console.log(result[0].Purchaseid);
-        res.send(result);
-    });
+    db.retrievePurchaseDetails(req, res, (data) => res.json(data));
 })
 
-app.get("/report", userAuthentication,function(req,res){
+app.get("/report", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/report.html');
 });
 
-app.get("/chart", userAuthentication,function(req,res){
+app.get("/chart", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/chart.html');
 });
 
@@ -385,4 +264,7 @@ app.get("/chart", userAuthentication,function(req,res){
 // });
 
 
-app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));
+app.listen(PORT, () => {
+    db.createTables();
+    console.log(`Server Running at port ${PORT}`)
+});

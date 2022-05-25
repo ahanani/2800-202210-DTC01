@@ -67,7 +67,7 @@ function formatStringItem(str) {
 }
 //***DB UTILITIES FUNCTIONS***
 
-const sql = require("mysql2");
+const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -90,7 +90,7 @@ function closeConnection() {
 
 
 //throws excpetion
-function insertUser(userData) {
+function insertUser(userData, next) {
     connection.query(`SELECT username FROM user;`, function(err, result) {
         if (err) console.log(err);
         let duplicate = duplicateUserName(userData.username, parseResultSet(result));
@@ -102,6 +102,7 @@ function insertUser(userData) {
         connection.query(insertUserStatement, function(err, result) {
             if (err) console.log(err);
             console.log(result);
+            next();
         });
     });
 }
@@ -152,7 +153,7 @@ function createTables() {
     lastname varchar(20) NOT NULL,
     password varchar(20) NOT NULL,
     PRIMARY KEY(username));`;
-    const csvlogTable = `CREATE TABLE IF NOT EXIST Csvlog (
+    const csvlogTable = `CREATE TABLE IF NOT EXISTS Csvlog (
         Purchaseid int NOT NULL AUTO_INCREMENT,
         Username VARCHAR(30) NOT NULL,
         Accounttype VARCHAR(10),
@@ -178,8 +179,8 @@ function createTables() {
 }
 
 
-function retrieveCardDetails(username, res) {
-    connection.query(`USE dtc01;SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(username)};`, function(err, result) {
+function retrieveCardDetails(req, res) {
+    connection.query(`USE dtc01;SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(req.session.username)};`, function(err, result) {
         const cards = parseResultSet(result);
         const cardDetails = [];
         for (let i = 0; i < cards.length; ++i) {
@@ -194,17 +195,64 @@ function retrieveCardDetails(username, res) {
 }
 
 
-function retrieveUserDetails(userData, res) {
-    const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = "${userData.username}" AND password = "${userData.password}";`
+function retrieveUserDetails(req, res, next) {
+    const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = ${formatStringItem(req.body.username)} AND password = ${formatStringItem(req.body.password)};`
     connection.query(getUserDetailsStatement,
         function(err, result) {
             if (err)
                 console.log(err);
-            res.json(parseResultSet(result));
+            //res.json(parseResultSet(result));
+            next(result[1][0]);
+        })
+}
+
+function validateUser(req, res, next) {
+    const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = "${req.body.username}" AND password = "${req.body.password}";`
+    connection.query(getUserDetailsStatement,
+        function(err, result) {
+            if (err)
+                console.log(err);
+            next(result[1][0]);
+        })
+}
+
+function retrievePurchaseDetails(req, res, next) {
+    let getPurchaseDetailsStatement = `USE dtc01;
+     SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.username}%" AND 
+    Transactiondate LIKE "%${req.params.date}";`
+
+    if (req.params.date == undefined) {
+        getPurchaseDetailsStatement = `USE dtc01;
+     SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.username}%";`
+    }
+
+    connection.query(getPurchaseDetailsStatement,
+        function(err, result) {
+            if (err)
+                console.log(err);
+            next(result[1][0]);
+        })
+}
+
+function updateUserDetails(req, res, next) {
+    const updateUSerDetailsStatement = `USE dtc01; UPDATE user SET firstname = ${formatStringItem(req.body.firstName)}, lastname = ${formatStringItem(req.body.lastName)}, 
+    password = ${formatStringItem(req.body.password)} WHERE username  ${formatStringItem(req.session.username)});`
+    connection.query(updateUSerDetailsStatement,
+        function(err, result) {
+            if (err)
+                console.log(err);
+            next();
         })
 }
 
 
 
 
-module.exports = { createTables, insertUser, retrieveCardDetails, insertCompany, insertCsvItem };
+
+
+
+
+
+
+
+module.exports = { createTables, insertUser, retrieveCardDetails, insertCompany, insertCsvItem, retrieveUserDetails, closeConnection, validateUser, retrievePurchaseDetails, updateUserDetails };
