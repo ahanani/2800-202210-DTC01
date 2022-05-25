@@ -2,7 +2,8 @@
 function parseResultSet(resultset) {
 
     if (resultset == undefined) {
-        return undefined;
+        throw "SQL tables EMPTY";
+        //return undefined;
     }
 
     parsedResult = [];
@@ -93,9 +94,11 @@ function closeConnection() {
 function insertUser(userData, next) {
     connection.query(`SELECT username FROM user;`, function(err, result) {
         if (err) console.log(err);
-        let duplicate = duplicateUserName(userData.username, parseResultSet(result));
-        if (duplicate) {
-            throw "Duplicate username";
+        if (result.length != 0) {
+            let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+            if (duplicate) {
+                throw "Duplicate username";
+            }
         }
         const insertUserStatement = `INSERT INTO user VALUES(${formatStringItem(userData.username)}, 
         ${formatStringItem(userData.firstname)}, ${formatStringItem(userData.lastname)}, ${formatStringItem(userData.password)});`;
