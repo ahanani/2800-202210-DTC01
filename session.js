@@ -46,7 +46,7 @@ function storeUserDetailsTemp(username, userDetails) {
 
 function getUserDetails(username) {
     for (let i = 0; i < users.length; ++i) {
-        if (users[i][username]) {
+        if (users[i] != undefined && users[i][username]) {
             const result = users[i];
             users[i] = undefined;
             return result;

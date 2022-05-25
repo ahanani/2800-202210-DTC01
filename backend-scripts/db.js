@@ -16,9 +16,20 @@ function parseResultSet(resultset) {
     return parsedResult;
 }
 
+// function duplicateUserName(newUserName, parsedResultSet) {
+//     for (let i = 0; i < parsedResultSet.length; ++i) {
+//         if (parsedResultSet[i][0] == newUserName) {
+//             return true;
+//         }
+//     }
+
+//     return false;
+// }
+
+
 function duplicateUserName(newUserName, parsedResultSet) {
     for (let i = 0; i < parsedResultSet.length; ++i) {
-        if (parsedResultSet[i][0] == newUserName) {
+        if (parsedResultSet[i].username == newUserName) {
             return true;
         }
     }
@@ -93,9 +104,12 @@ function closeConnection() {
 //throws excpetion
 function insertUser(userData, next) {
     connection.query(`SELECT username FROM user;`, function(err, result) {
+
         if (err) console.log(err);
         if (result.length != 0) {
-            let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+            //let duplicate = duplicateUserName(userData.username, parseResultSet(result));
+            let duplicate = duplicateUserName(userData.username, (result));
+
             if (duplicate) {
                 throw "Duplicate username";
             }
