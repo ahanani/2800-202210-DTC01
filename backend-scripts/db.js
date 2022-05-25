@@ -236,7 +236,7 @@ function retrievePurchaseDetails(req, res, next) {
 
 function updateUserDetails(req, res, next) {
     const updateUSerDetailsStatement = `USE dtc01; UPDATE user SET firstname = ${formatStringItem(req.body.firstName)}, lastname = ${formatStringItem(req.body.lastName)}, 
-    password = ${formatStringItem(req.body.password)} WHERE username  ${formatStringItem(req.session.username)});`
+    password = ${formatStringItem(req.body.password)} WHERE username = ${formatStringItem(req.session.username)};`
     connection.query(updateUSerDetailsStatement,
         function(err, result) {
             if (err)
