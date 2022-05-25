@@ -69,12 +69,12 @@ app.get("/", (req, res) => {
 });
 
 app.post('/user', (req, res) => {
-
     db.validateUser(req, res, (userinfo) => {
         if (userinfo != undefined) {
             req.session.loginStatus = true;
             req.session.username = req.body.username;
-            res.redirect(`/landingPage/${results[1]}`);
+            //res.redirect(`/landingPage/${results[1]}`);
+            res.redirect('/landingPage');
         } else {
             res.status(401).send("Incorrect password or username");
         }
@@ -93,7 +93,8 @@ app.post("/user", (req, res) => {
             req.session.user = req.body.username;
             let results = Object.values(result[3][0]);
             req.session.name = results[1];
-            res.redirect(`/landingPage/${results[1]}`);
+            //res.redirect(`/landingPage/${results[1]}`);
+            res.redirect('/landingPage');
         } else {
             req.session.loginStatus = false;
             res.status(401);
@@ -101,9 +102,9 @@ app.post("/user", (req, res) => {
     });
 });
 
-app.get("/signUpPage", (req, res) => {
-    res.sendFile(`${__dirname}/html/signup.html`);
-});
+// app.get("/signUpPage", (req, res) => {
+//     res.sendFile(`${__dirname}/html/signup.html`);
+// });
 
 app.get("/landingPage", userAuthentication, (req, res) => {
     res.render("landingPage.ejs", { user: req.session.username });
@@ -152,7 +153,7 @@ app.get("/userProfile", (req, res) => {
 });
 
 app.get("/userProfileDetails", userAuthentication, (req, res) => {
-    retrieveUserDetails(req, res, (data) => { res.json(data) });
+    db.retrieveUserDetails(req, res, (data) => { res.json(data) });
 });
 
 app.post("/editDataBase", userAuthentication, (req, res) => {
