@@ -163,7 +163,13 @@ app.get('/registeraccount/:username', (req, res) => {
             firstname: userDetails[req.params.username][0],
             lastname: userDetails[req.params.username][1],
             password: userDetails[req.params.username][2]
-        }, () => res.redirect("/"));
+        }, (data) => {
+            if (data == "duplicate") {
+                res.send("user already exists");
+            } else {
+                res.redirect("/")
+            }
+        });
     }
 });
 
@@ -171,7 +177,7 @@ app.get("/insight", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/insight.html');
 });
 
-app.get("/insight/data", userAuthentication,function(req, res) {
+app.get("/insight/data", userAuthentication, function(req, res) {
     db.retrieveInsightDetails(req, res, (data) => {
         res.json(data)
     });
