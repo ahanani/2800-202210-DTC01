@@ -178,6 +178,7 @@ app.post('/makeaccount', (req, res) => {
 });
 
 app.get('/registeraccount/:username', (req, res) => {
+    // console.log("req.param..:" + req.params.username)
     const userDetails = getUserDetails(req.params.username);
     if (!userDetails) {
         res.send('session expired');
@@ -198,11 +199,16 @@ app.get("/insight", userAuthentication, function(req, res) {
 
 
 app.get("/insight/data", function(req, res) {
-    connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
-        if (err) throw err;
-        console.log(result[0]["SUM(Cad)"]);
-        res.send(result)
+
+    db.retrieveInsightDetails(req, res, (data) => {
+        console.log(data);
+        res.json(data)
     });
+    // connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
+    //     if (err) throw err;
+    //     console.log(result[0]["SUM(Cad)"]);
+    //     res.send(result)
+    // });
 });
 
 app.get("/expenses", userAuthentication, function(req, res) {

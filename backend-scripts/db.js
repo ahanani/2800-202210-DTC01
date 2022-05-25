@@ -6,6 +6,7 @@ function parseResultSet(resultset) {
     }
 
     parsedResult = [];
+    console.log(resultset)
 
     for (let i = 0; i < resultset[1].length; ++i) {
 
@@ -39,11 +40,22 @@ function duplicateCompany(newCompanyName, parsedResultSet) {
 }
 
 
-function formatDate(unformattedDate) {
-    let date = new Date(unformattedDate);
-    let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
-    return '"' + formattedDate + '"';
+function formatDate(unformattedDate){
+    let d = unformattedDate.split('/');
+    let year = d[2];
+    let month = (d[0].length == 1) ? '0' + d[0]: d[0];
+    let day = (d[1].length == 1) ? '0' + d[1]: d[1];
+    let condition = new Date(`${year}-${month}-${day}`);
+    if(condition == 'Invalid Date'){
+        throw "Invalid Date";
+    }
+    console.log(d)
+    console.log(year)
+    console.log(month)
+    console.log(day)
+    return `"${year}-${month}-${day}"`;
 }
+
 
 function formatFloatItem(float) {
 
@@ -71,8 +83,8 @@ const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
     host: "localhost",
-    user: "amin5",
-    password: "MySql1000$",
+    user: "root",
+    password: "0000",
     multipleStatements: true
 });
 
@@ -92,6 +104,7 @@ function closeConnection() {
 //throws excpetion
 function insertUser(userData, next) {
     connection.query(`SELECT username FROM user;`, function(err, result) {
+        console.log("forinsertuser:" + result)
         if (err) console.log(err);
         let duplicate = duplicateUserName(userData.username, parseResultSet(result));
         if (duplicate) {
@@ -234,6 +247,30 @@ function retrievePurchaseDetails(req, res, next) {
         })
 }
 
+function retrieveInsightDetails(req, res, next) {
+
+    let getInsightDetailsStatement = "USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4";
+
+
+//     let getPurchaseDetailsStatement = `USE dtc01;
+//     SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.username}%" AND 
+//    Transactiondate LIKE "%${req.params.date}";`
+
+//    if (req.params.date == undefined) {
+//        getPurchaseDetailsStatement = `USE dtc01;
+//     SELECT * FROM Csvlog WHERE Username LIKE "%${req.session.username}%";`
+//    }
+
+   connection.query(getInsightDetailsStatement,
+       function(err, result) {
+           if (err)
+               console.log(err);
+           // console.log("$$$", result[1], "$$$");
+           next(result[1]);
+       })
+       
+    }
+
 function updateUserDetails(req, res, next) {
     const updateUSerDetailsStatement = `USE dtc01; UPDATE user SET firstname = ${formatStringItem(req.body.firstName)}, lastname = ${formatStringItem(req.body.lastName)}, 
     password = ${formatStringItem(req.body.password)} WHERE username = ${formatStringItem(req.session.username)};`
@@ -255,4 +292,4 @@ function updateUserDetails(req, res, next) {
 
 
 
-module.exports = { createTables, insertUser, retrieveCardDetails, insertCompany, insertCsvItem, retrieveUserDetails, closeConnection, validateUser, retrievePurchaseDetails, updateUserDetails };
+module.exports = { createTables, insertUser, retrieveCardDetails, insertCompany, insertCsvItem, retrieveUserDetails, closeConnection, validateUser, retrievePurchaseDetails, updateUserDetails, retrieveInsightDetails };
