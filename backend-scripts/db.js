@@ -230,7 +230,8 @@ function retrievePurchaseDetails(req, res, next) {
         function(err, result) {
             if (err)
                 console.log(err);
-            next(result[1][0]);
+            // console.log("$$$", result[1], "$$$");
+            next(result[1]);
         })
 }
 

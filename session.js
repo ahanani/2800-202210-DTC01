@@ -207,7 +207,10 @@ app.get("/expenses", userAuthentication, function(req, res) {
 })
 
 app.get("/expenses/data", userAuthentication, function(req, res) {
-    db.retrievePurchaseDetails(req, res, (data) => res.json(data));
+    db.retrievePurchaseDetails(req, res, (data) => {
+        console.log(data);
+        res.json(data)
+    });
 })
 
 app.get("/report", userAuthentication, function(req, res) {
