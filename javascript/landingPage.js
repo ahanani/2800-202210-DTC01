@@ -86,56 +86,28 @@ function setup() {
         });
 
         $("#logout").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/logout",
-                success: function (response) {
-                    $(location).attr("href", "/");
-                }
-            });
+            $(location).attr("href", "/logout");
         });
 
         $("#addCards").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/addCardButton",
-                success: function (response) {
-                    $(location).attr("href", "/addCard");
-                }
-            });
-        });
-    });
-
-    $("#opt3").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                $(location).attr("href", "/chart");
-            }
+            $(location).attr("href", "/addCard");
         });
     });
 
     $("#opt1").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/userProfile");
-            }
-        });
+        $(location).attr("href", "/userProfile");
+    });
+
+    $("#opt2").click(() => {
+        $(location).attr("href", "/insight");
+    })
+
+    $("#opt3").click(() => {
+        $(location).attr("href", "/chart");
     });
 
     $("#opt4").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/expenses");
-            }
-        }); 
+        $(location).attr("href", "/expenses");
     })
 
     populateLandingPage();

@@ -9,7 +9,7 @@ const fs = require('fs');
 const http = require('http');
 app.set('view engine', 'ejs');
 app.use(express.static('public'))
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 
 
@@ -73,31 +73,10 @@ app.post('/user', (req, res) => {
         if (userinfo != undefined) {
             req.session.loginStatus = true;
             req.session.username = req.body.username;
-            //res.redirect(`/landingPage/${results[1]}`);
+            req.session.name = userinfo.firstname;
             res.redirect('/landingPage');
         } else {
             res.status(401).send("Incorrect password or username");
-        }
-    });
-});
-
-app.post("/user", (req, res) => {
-    connection.query(`CREATE DATABASE IF NOT EXISTS dtc01; USE dtc01; ${createUserTable}; SELECT * FROM user WHERE username =
-            "${req.body.username}" AND password =  "${req.body.password}";`, (err, result) => {
-        if (err) {
-            console.log(err);
-        }
-        console.log(`${result[3].length} matches found!`);
-        if (result[3].length > 0) {
-            req.session.loginStatus = true;
-            req.session.user = req.body.username;
-            let results = Object.values(result[3][0]);
-            req.session.name = results[1];
-            //res.redirect(`/landingPage/${results[1]}`);
-            res.redirect('/landingPage');
-        } else {
-            req.session.loginStatus = false;
-            res.status(401);
         }
     });
 });
@@ -107,11 +86,7 @@ app.post("/user", (req, res) => {
 // });
 
 app.get("/landingPage", userAuthentication, (req, res) => {
-    res.render("landingPage.ejs", { user: req.session.username });
-});
-
-app.get("/addCardButton", userAuthentication, (req, res) => {
-    res.status(200).send("added card button");
+    res.render("landingPage.ejs", { user: req.session.name });
 });
 
 app.get("/addCard", userAuthentication, (req, res) => {
@@ -196,12 +171,9 @@ app.get("/insight", userAuthentication, function(req, res) {
     res.sendFile(__dirname + '/html/insight.html');
 });
 
-
-app.get("/insight/data", function(req, res) {
-    connection.query("USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4;", function(err, result, fields) {
-        if (err) throw err;
-        console.log(result[0]["SUM(Cad)"]);
-        res.send(result)
+app.get("/insight/data", userAuthentication,function(req, res) {
+    db.retrieveInsightDetails(req, res, (data) => {
+        res.json(data)
     });
 });
 
@@ -211,7 +183,6 @@ app.get("/expenses", userAuthentication, function(req, res) {
 
 app.get("/expenses/data", userAuthentication, function(req, res) {
     db.retrievePurchaseDetails(req, res, (data) => {
-        console.log(data);
         res.json(data)
     });
 })

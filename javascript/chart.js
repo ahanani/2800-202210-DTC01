@@ -56,6 +56,30 @@ function setup() {
         xhttp.send();
     });
 
+    var open = false;
+
+    $("#logo").click(() => {
+        if (open) {
+            open = false;
+            $("#cardsMenu").animate({
+                height: '0%'
+            }, 500);
+            $("#addCards").animate({
+                height: '0%'
+            }, 400);
+            $("#addCardsP").hide();
+        } else {
+            open = true;
+            $("#addCardsP").show();
+            $("#cardsMenu").animate({
+                height: '100%'
+            }, 500);
+            $("#addCards").animate({
+                height: '100%'
+            }, 600);
+        }
+    });
+
     $("body").append(`<div id="cardsMenu"></div>`);
     $("#cardsMenu").css({
         'height': '0%',
@@ -64,7 +88,7 @@ function setup() {
         'z-index': '2',
         'position': 'fixed',
         'overflow': 'hidden',
-        'grid-column': '1 / span 3',
+        'grid-column': '1 / span 4',
         'grid-row': '1 / span 4',
         'display': 'grid',
         'grid-template-columns': '30% 40% 30%',
@@ -104,79 +128,29 @@ function setup() {
         });
 
         $("#logout").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/logout",
-                success: function (response) {
-                    $(location).attr("href", "/");
-                }
-            });
+            $(location).attr("href", "/logout");
         });
 
         $("#addCards").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/addCardButton",
-                success: function (response) {
-                    $(location).attr("href", "/addCard");
-                }
-            });
-        });
-    });
-
-    $("#opt3").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                $(location).attr("href", "/chart");
-            }
+            $(location).attr("href", "/addCard");
         });
     });
 
     $("#opt1").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/userProfile");
-            }
-        });
+        $(location).attr("href", "/userProfile");
     });
 
-    $("#logo").click(() => {
-        if (open) {
-            open = false;
-            $("#cardsMenu").animate({
-                height: '0%'
-            }, 500);
-            $("#addCards").animate({
-                height: '0%'
-            }, 400);
-            $("#addCardsP").hide();
-        } else {
-            open = true;
-            $("#addCardsP").show();
-            $("#cardsMenu").animate({
-                height: '100%'
-            }, 500);
-            $("#addCards").animate({
-                height: '100%'
-            }, 600);
-        }
+    $("#opt2").click(() => {
+        $(location).attr("href", "/insight");
+    })
+
+    $("#opt3").click(() => {
+        $(location).attr("href", "/chart");
     });
 
     $("#opt4").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/expenses");
-            }
-        }); 
-    })
+        $(location).attr("href", "/expenses");
+    });
 }
 
 $(document).ready(setup);

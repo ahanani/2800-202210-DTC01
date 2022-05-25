@@ -5,19 +5,9 @@ function populateRows(data) {
     sum = 0
 
 
-    result = ""
-    result += "<table>"
-    result += `<tr>
-    <th>Card</th>
-    <th>Date</th>
-    <th>Description</th>
-    <th>Amount</th>
-    </tr>
-    `
-    result += "<tr>"
+    result = "";
 
     for (i = 0; i < data.length; i++) {
-        console.log(data[i].Purchaseid)
         cardName = data[i].Accounttype
         transDate = data[i].Transactiondate.slice(0, 10)
         store = data[i].Description1.slice(0, 20)
@@ -38,7 +28,6 @@ function populateRows(data) {
     }
 
     result += "</table>"
-    console.log(result)
     $(".transactionRecord").html(result)
 }
 
@@ -54,6 +43,21 @@ async function getTransactions() {
 
 
 function setup() {
+    $("#opt1").click(() => {
+        $(location).attr("href", "/userProfile");
+    });
+
+    $("#opt2").click(() => {
+        $(location).attr("href", "/insight");
+    })
+
+    $("#opt3").click(() => {
+        $(location).attr("href", "/chart");
+    });
+
+    $("#opt4").click(() => {
+        $(location).attr("href", "/expenses");
+    });
 
     var open = false;
 
@@ -105,44 +109,11 @@ function setup() {
         });
 
         $("#logout").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/logout",
-                success: function (response) {
-                    $(location).attr("href", "/");
-                }
-            });
+            $(location).attr("href", "/logout");
         });
 
         $("#addCards").click(() => {
-            $.ajax({
-                type: "get",
-                url: "/addCardButton",
-                success: function (response) {
-                    $(location).attr("href", "/addCard");
-                }
-            });
-        });
-    });
-
-    $("#opt3").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                $(location).attr("href", "/chart");
-            }
-        });
-    });
-
-    $("#opt1").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/userProfile");
-            }
+            $(location).attr("href", "/addCard");
         });
     });
 
@@ -167,17 +138,6 @@ function setup() {
             }, 600);
         }
     });
-
-    $("#opt4").click(() => {
-        $.ajax({
-            type: "post",
-            url: "/userProfileButton",
-            success: function (response) {
-                console.log(response)
-                $(location).attr("href", "/expenses");
-            }
-        }); 
-    })
 
 
     getTransactions();

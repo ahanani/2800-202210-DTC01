@@ -124,3 +124,8 @@ span:hover {
         grid-template-rows: 10% 30% 50% 10%;
     }
 }
+
+a {
+    text-decoration: none;
+}
+

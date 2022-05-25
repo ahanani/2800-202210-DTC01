@@ -52,10 +52,17 @@ function duplicateCompany(newCompanyName, parsedResultSet) {
 
 
 function formatDate(unformattedDate) {
-    let date = new Date(unformattedDate);
-    let formattedDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
-    return '"' + formattedDate + '"';
+    let d = unformattedDate.split('/');
+    let year = d[2];
+    let month = (d[0].length == 1) ? '0' + d[0] : d[0];
+    let day = (d[1].length == 1) ? '0' + d[1] : d[1];
+    let condition = new Date(`${year}-${month}-${day}`);
+    if (condition == 'Invalid Date') {
+        throw "Invalid Date";
+    }
+    return `"${year}-${month}-${day}"`;
 }
+
 
 function formatFloatItem(float) {
 
@@ -83,13 +90,13 @@ const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
     host: "localhost",
-    user: "amin5",
-    password: "MySql1000$",
+    user: "root",
+    password: "password",
     multipleStatements: true
 });
 
 function connect() {
-    connection.connect(function(err) {
+    connection.connect(function (err) {
         if (err) throw err;
         console.log("Connected!");
     });
@@ -103,7 +110,7 @@ function closeConnection() {
 
 //throws excpetion
 function insertUser(userData, next) {
-    connection.query(`SELECT username FROM user;`, function(err, result) {
+    connection.query(`SELECT username FROM user;`, function (err, result) {
 
         if (err) console.log(err);
         if (result.length != 0) {
@@ -116,7 +123,7 @@ function insertUser(userData, next) {
         }
         const insertUserStatement = `INSERT INTO user VALUES(${formatStringItem(userData.username)}, 
         ${formatStringItem(userData.firstname)}, ${formatStringItem(userData.lastname)}, ${formatStringItem(userData.password)});`;
-        connection.query(insertUserStatement, function(err, result) {
+        connection.query(insertUserStatement, function (err, result) {
             if (err) console.log(err);
             console.log(result);
             next();
@@ -126,7 +133,7 @@ function insertUser(userData, next) {
 
 //throws exception
 function insertCompany(companyData) {
-    connection.query(`USE dtc01; SELECT Companyname FROM company;`, function(err, result) {
+    connection.query(`USE dtc01; SELECT Companyname FROM company;`, function (err, result) {
         if (err) console.log(err);
         let duplicate = duplicateCompany(companyData.companyname, parseResultSet(result));
         if (duplicate) {
@@ -138,7 +145,7 @@ function insertCompany(companyData) {
         VALUES(${formatStringItem(companyData.companyname)}, ${formatStringItem(companyData.companyindustry)}, 
         ${formatStringItem(companyData.companydescription)});`;
 
-    connection.query(queryStatement, function(err, result) {
+    connection.query(queryStatement, function (err, result) {
         if (err) console.log(err);
     });
 }
@@ -156,7 +163,7 @@ function insertCsvItem(username, csvItemData) {
     ${formatFloatItem(csvItemData["CAD$"])}, 
     ${formatFloatItem(csvItemData["USD$"])});`
 
-    connection.query(insertCsvItemStatement, function(err, result) {
+    connection.query(insertCsvItemStatement, function (err, result) {
         if (err) console.log(err);
     });
 }
@@ -189,7 +196,7 @@ function createTables() {
             Companydescription VARCHAR(50),
             PRIMARY KEY(Companyid, Companyname));`;
 
-    connection.query(database + userTable + csvlogTable + companyTable, function(err, result) {
+    connection.query(database + userTable + csvlogTable + companyTable, function (err, result) {
         if (err)
             console.log(err);
     });
@@ -197,11 +204,11 @@ function createTables() {
 
 
 function retrieveCardDetails(req, res) {
-    connection.query(`USE dtc01;SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(req.session.username)};`, function(err, result) {
+    connection.query(`USE dtc01;SELECT DISTINCT Accounttype, Accountnumber FROM csvlog WHERE username = ${formatStringItem(req.session.username)};`, function (err, result) {
         const cards = parseResultSet(result);
         const cardDetails = [];
         for (let i = 0; i < cards.length; ++i) {
-            connection.query(`USE dtc01; SELECT * FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function(err, result) {
+            connection.query(`USE dtc01; SELECT * FROM csvlog WHERE Accounttype = ${formatStringItem(cards[i][0])} AND Accountnumber = ${formatStringItem(cards[i][1])};`, function (err, result) {
                 cardDetails.push(parseResultSet(result));
                 if (i == cards.length - 1) {
                     res.send(cardDetails);
@@ -215,7 +222,7 @@ function retrieveCardDetails(req, res) {
 function retrieveUserDetails(req, res, next) {
     const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = ${formatStringItem(req.session.username)};`
     connection.query(getUserDetailsStatement,
-        function(err, result) {
+        function (err, result) {
             if (err)
                 console.log(err);
             next(result[1][0]);
@@ -225,7 +232,7 @@ function retrieveUserDetails(req, res, next) {
 function validateUser(req, res, next) {
     const getUserDetailsStatement = `USE dtc01; SELECT * FROM user WHERE username = "${req.body.username}" AND password = "${req.body.password}";`
     connection.query(getUserDetailsStatement,
-        function(err, result) {
+        function (err, result) {
             if (err)
                 console.log(err);
             next(result[1][0]);
@@ -243,7 +250,7 @@ function retrievePurchaseDetails(req, res, next) {
     }
 
     connection.query(getPurchaseDetailsStatement,
-        function(err, result) {
+        function (err, result) {
             if (err)
                 console.log(err);
             // console.log("$$$", result[1], "$$$");
@@ -251,11 +258,22 @@ function retrievePurchaseDetails(req, res, next) {
         })
 }
 
+function retrieveInsightDetails(req, res, next) {
+
+    let getInsightDetailsStatement = "USE dtc01; SELECT WEEK(Transactiondate) AS Week, SUM(Cad) FROM csvlog WHERE MONTH(Transactiondate) IN (04, 05) GROUP BY WEEK(Transactiondate) ORDER BY WEEK(Transactiondate) DESC LIMIT 4";
+    connection.query(getInsightDetailsStatement,
+        function (err, result) {
+            if (err)
+                console.log(err);
+            next(result[1]);
+        });
+}
+
 function updateUserDetails(req, res, next) {
     const updateUSerDetailsStatement = `USE dtc01; UPDATE user SET firstname = ${formatStringItem(req.body.firstName)}, lastname = ${formatStringItem(req.body.lastName)}, 
     password = ${formatStringItem(req.body.password)} WHERE username = ${formatStringItem(req.session.username)};`
     connection.query(updateUSerDetailsStatement,
-        function(err, result) {
+        function (err, result) {
             if (err)
                 console.log(err);
             next();
@@ -272,4 +290,16 @@ function updateUserDetails(req, res, next) {
 
 
 
-module.exports = { createTables, insertUser, retrieveCardDetails, insertCompany, insertCsvItem, retrieveUserDetails, closeConnection, validateUser, retrievePurchaseDetails, updateUserDetails };
+module.exports = {
+    createTables,
+    insertUser,
+    retrieveCardDetails,
+    insertCompany,
+    insertCsvItem,
+    retrieveUserDetails,
+    closeConnection,
+    validateUser,
+    retrievePurchaseDetails,
+    updateUserDetails,
+    retrieveInsightDetails
+};
