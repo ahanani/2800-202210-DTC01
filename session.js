@@ -9,7 +9,11 @@ const fs = require('fs');
 const http = require('http');
 app.set('view engine', 'ejs');
 app.use(express.static('public'))
+const bodyparser = require('body-parser');
 const PORT = process.env.PORT || 3000;
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
+
 
 
 
@@ -102,14 +106,9 @@ app.get("/logout", userAuthentication, (req, res) => {
 
 
 app.post('/uploadfile', userAuthentication, (req, res) => {
-    if (req.body.fileupload != undefined) {
-        insertcsv.processPurchase(req, res, () => {
-            res.redirect("/expenses");
-        });
-    } else {
-        res.sendFile('/html/fileNotSelected.html', { root: __dirname });
-    }
-
+    insertcsv.processPurchase(req, res, () => {
+        res.redirect("/expenses");
+    });
 });
 
 app.get("/userDetails/:date", userAuthentication, (req, res) => {
