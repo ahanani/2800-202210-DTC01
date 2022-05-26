@@ -19,7 +19,7 @@
 
     <form id="selectFile" action="/uploadfile" method="post" enctype="multipart/form-data">
         <input id="fileupload" type="file" name="fileupload">
-        <input id="uploadFileButton" type="submit" value="Process">
+        <input id="uploadFileButton" type="submit" value="Process" disabled>
     </form>
     <div id="expenses"></div>
     <script>
@@ -37,6 +37,13 @@
                     // $('#expenses').html(res);
                 }
             });
+        }
+
+        document.getElementById('fileupload').onchange = (f) => {
+            const content = document.getElementById('fileupload').value;
+            if (content != undefined && content != '') {
+                document.getElementById('uploadFileButton').disabled = false;
+            }
         }
     </script>
 </body>
