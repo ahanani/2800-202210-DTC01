@@ -40,27 +40,27 @@ form {
 }
 
 label {
-    margin: auto 0% auto auto;
+    margin: auto 5% auto auto;
 }
 
 #uName {
     display: grid;
-    grid-template-columns: 30% 70%;
+    grid-template-columns: 40% 60%;
 }
 
 #fName {
     display: grid;
-    grid-template-columns: 30% 70%;
+    grid-template-columns: 40% 60%;
 }
 
 #lName {
     display: grid;
-    grid-template-columns: 30% 70%;
+    grid-template-columns: 40% 60%;
 }
 
 #pass {
     display: grid;
-    grid-template-columns: 30% 70%;
+    grid-template-columns: 40% 60%;
 }
 
 #username {
@@ -69,6 +69,7 @@ label {
     border-radius: 25px;
     height: 20px;
     padding: 0% 3% 0% 3%;
+    width: 90%;
 }
 
 #firstname {
@@ -77,6 +78,7 @@ label {
     border-radius: 25px;
     height: 20px;
     padding: 0% 3% 0% 3%;
+    width: 90%;
 }
 
 #lastname {
@@ -85,6 +87,7 @@ label {
     border-radius: 25px;
     height: 20px;
     padding: 0% 3% 0% 3%;
+    width: 90%;
 }
 
 #password {
@@ -93,6 +96,7 @@ label {
     border-radius: 25px;
     height: 20px;
     padding: 0% 3% 0% 3%;
+    width: 90%;
 }
 
 #submitSignUp {

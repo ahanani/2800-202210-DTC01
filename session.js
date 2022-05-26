@@ -95,7 +95,7 @@ app.get("/landingPage", userAuthentication, (req, res) => {
 
 app.get("/addCard", userAuthentication, (req, res) => {
 
-    res.render("upload.ejs", { user: req.session.username });
+    res.render("upload.ejs", { user: req.session.name });
 });
 
 app.get("/logout", userAuthentication, (req, res) => {

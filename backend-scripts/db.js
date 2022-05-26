@@ -16,17 +16,6 @@ function parseResultSet(resultset) {
     return parsedResult;
 }
 
-// function duplicateUserName(newUserName, parsedResultSet) {
-//     for (let i = 0; i < parsedResultSet.length; ++i) {
-//         if (parsedResultSet[i][0] == newUserName) {
-//             return true;
-//         }
-//     }
-
-//     return false;
-// }
-
-
 function duplicateUserName(newUserName, parsedResultSet) {
     for (let i = 0; i < parsedResultSet.length; ++i) {
         if (parsedResultSet[i].username == newUserName) {
@@ -89,9 +78,9 @@ function formatStringItem(str) {
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
-    host: "localhost",
-    user: "amin5",
-    password: "MySql1000$",
+    host: "127.0.0.1",
+    user: "root",
+    password: "password",
     multipleStatements: true
 });
 
