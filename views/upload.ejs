@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= user %> - Add Cards</title>
+    <link rel="icon" type="image/x-icon" href="/Dollar-Track.ico">
+    <link rel="stylesheet" href="/upload.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <p>
+        <%= user%> here you can add your cards</p>
+
+    <form id="selectFile" action="/uploadfile" method="post" enctype="multipart/form-data">
+        <input id="fileupload" type="file" name="fileupload">
+        <input id="uploadFileButton" type="submit" value="Process" disabled>
+    </form>
+    <div id="expenses"></div>
+    <script>
+        function specifyDate() {
+            $.ajax({
+                url: "/expense",
+                type: 'post',
+                data: {
+                    'startdate': $('#startdate').val(),
+                    'enddate': $('#enddate').val()
+                },
+                success: function(res) {
+                    // $('#expenses').html(res);
+                    // console.log(res);
+                    // $('#expenses').html(res);
+                }
+            });
+        }
+
+        document.getElementById('fileupload').onchange = (f) => {
+            const content = document.getElementById('fileupload').value;
+            if (content != undefined && content != '') {
+                document.getElementById('uploadFileButton').disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

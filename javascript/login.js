@@ -1,17 +1,17 @@
-window.onload = () => {
-    document.getElementById("userId").value = "";
+function setup() {
+    $("span").click(() => {
+        $.ajax({
+            type: "get",
+            url: "/signUpPage",
+            dataType: "html",
+            success: function(response) {
+                console.log(response);
+            }
+        })
+    });
 }
 
 
-document.getElementById("submit").addEventListener("click", function() {
-    let userId = (document.getElementById("userId").value);
-    let userPassword = document.getElementById("userPassword").value;
 
-    let xhttp =  new XMLHttpRequest();
 
-    xhttp.onload = () => {
-    }
-
-    xhttp.open("GET", "/users?id=" + userId + "&password=" + userPassword, true);
-    xhttp.send();
-});
+$(document).ready(setup);
