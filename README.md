@@ -76,8 +76,9 @@ The proper way to use our product is upload the right formatted `CSV` file from 
 
 <b>Atsuki</b>, <b>Amin</b>, <b>Abdullah</b> and <b>Jesper</b> for making this project happen!
 
-# Contact Information
+# Contact Information (email)
 
 <b>Abdullah:</b> ab.hanani1998@gmail.com<br>
 <b>Jesper:</b> shong101@my.bcit.ca<br>
-<b>Atsuki:</b> auchida1@my.bcit.ca
+<b>Atsuki:</b> auchida1@my.bcit.ca<br>
+<b>Amin:</b> ajafarpour@my.bcit.ca
